@@ -1,0 +1,895 @@
+⏹ 停止 & 开奖
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D 抽奖星球 (Lottery Planet)</title>
+    <!-- 引入 Tailwind CSS 进行快速 UI 样式开发 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- 引入 TWEEN.js 用于平滑动画 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #050510;
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      }
+      #canvas-container {
+        width: 100vw;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+      }
+
+      /* UI 层级在 Canvas 之上 */
+      #ui-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+        pointer-events: none;
+      }
+      .interactive {
+        pointer-events: auto;
+      }
+
+      /* 玻璃拟态卡片 - 基础版 */
+      .glass-panel {
+        background: rgba(20, 30, 60, 0.4);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      /* 倒计时动画 */
+      @keyframes pulse-scale {
+        0% {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 0;
+        }
+      }
+      .countdown-anim {
+        animation: pulse-scale 0.8s ease-out forwards;
+      }
+
+      /* 霓虹发光文字 */
+      .neon-text {
+        text-shadow:
+          0 0 10px rgba(0, 255, 255, 0.7),
+          0 0 20px rgba(0, 255, 255, 0.5);
+      }
+
+      /* --- 周年庆主题样式 --- */
+
+      /* 缎带渐变文字 */
+      .ribbon-text {
+        background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 25%, #ff7eb3 50%, #f6d365 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 800;
+      }
+
+      /* 弹窗卡片背景 - 模仿图片的流光感 */
+      .anniversary-card {
+        background: rgba(10, 10, 25, 0.85);
+        border-radius: 24px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow:
+          0 20px 50px rgba(0, 0, 0, 0.5),
+          0 0 30px rgba(120, 255, 214, 0.2);
+      }
+
+      /* 动态流光边框 */
+      .anniversary-card::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(transparent, #ff7eb3, #78ffd6, #f6d365, transparent 30%);
+        animation: rotate-border 4s linear infinite;
+        z-index: 0;
+        opacity: 0.5;
+      }
+
+      /* 内部遮罩，用于显示边框 */
+      .card-inner {
+        position: relative;
+        z-index: 1;
+        background: #0f1016; /* 深色背景衬托多彩文字 */
+        border-radius: 22px;
+        height: calc(100% - 4px);
+        width: calc(100% - 4px);
+        margin: 2px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      @keyframes rotate-border {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* 装饰性的背景数字 "4" */
+      .bg-deco-number {
+        position: absolute;
+        font-size: 200px;
+        font-weight: 900;
+        top: -40px;
+        right: -20px;
+        background: linear-gradient(135deg, rgba(246, 211, 101, 0.1), rgba(255, 126, 179, 0.1));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        z-index: 0;
+        pointer-events: none;
+        font-family: "Arial Black", sans-serif;
+        transform: rotate(10deg);
+      }
+
+      /* 按钮渐变 - 呼应图片色调 */
+      .btn-gradient-theme {
+        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+      }
+      .btn-gradient-theme:hover {
+        background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%);
+        box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+      }
+
+      /* 自动继续按钮样式 */
+      .btn-auto-next {
+        background-color: #1f2937;
+        color: #d1d5db;
+      }
+
+      /* 弹窗入场弹性动画 */
+      .modal-enter-bounce {
+        transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 3D 容器 -->
+    <div id="canvas-container"></div>
+
+    <!-- UI 交互层 -->
+    <div id="ui-layer" class="flex flex-col justify-between p-6">
+      <!-- 顶部：状态栏 -->
+      <div class="flex justify-between items-start">
+        <div class="glass-panel p-4 rounded-xl text-white interactive">
+          <h1 class="text-2xl font-bold ribbon-text">LOTTERY PLANET</h1>
+          <div class="text-xs text-gray-400 mt-1">
+            4周年庆典版 | 参与人数: <span id="user-count" class="text-cyan-300">0</span>
+          </div>
+          <div class="mt-2 flex items-center gap-2">
+            <div id="status-dot" class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+            <span id="status-text" class="text-sm font-mono text-gray-300">READY</span>
+          </div>
+        </div>
+
+        <div class="glass-panel p-2 rounded-lg flex gap-2 interactive">
+          <button class="p-2 hover:bg-white/10 rounded text-gray-300 text-xs" title="设置">⚙️</button>
+          <button class="p-2 hover:bg-white/10 rounded text-gray-300 text-xs" title="全屏" onclick="toggleFullScreen()">
+            ⛶
+          </button>
+        </div>
+      </div>
+
+      <!-- 中心：倒计时显示 -->
+      <div
+        id="countdown-display"
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-9xl font-black text-white hidden z-50 neon-text"
+      >
+        3
+      </div>
+
+      <!-- 底部：控制栏 -->
+      <div class="flex justify-center items-end pb-8">
+        <div class="glass-panel px-6 py-4 rounded-full flex gap-4 interactive items-center">
+          <!-- 开始/抽奖按钮 -->
+          <button
+            id="btn-start"
+            class="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 hover:from-pink-400 hover:via-purple-400 hover:to-cyan-400 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center gap-2 border border-white/20"
+          >
+            <span class="text-xl">✨</span> 开启好运 (自动轮训)
+          </button>
+
+          <!-- 暂停/继续 -->
+          <button
+            id="btn-pause"
+            class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full shadow transition hidden"
+          >
+            ⏸ 暂停
+          </button>
+
+          <!-- 停止/跳过 -->
+          <button
+            id="btn-stop"
+            class="bg-red-600/80 hover:bg-red-500 text-white font-bold py-3 px-6 rounded-full shadow transition hidden border border-red-400/30"
+          >
+            ⏹ 停止 & 开奖
+          </button>
+
+          <div class="w-px h-8 bg-gray-600 mx-2"></div>
+          <button onclick="resetCamera()" class="text-gray-400 hover:text-white text-sm">重置视角</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 结果弹窗 (Theme: 4th Anniversary Ribbon) -->
+    <div
+      id="result-modal"
+      class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center backdrop-blur-sm"
+    >
+      <!-- 外层容器负责旋转流光边框 -->
+      <!-- 初始状态为 scale-0 opacity-0，通过 JS 动态应用 bounce 动画 -->
+      <div class="anniversary-card max-w-md w-full mx-4 transform scale-0 opacity-0" id="result-card">
+        <!-- 内容容器 -->
+        <div class="card-inner p-8 relative overflow-hidden">
+          <!-- 背景装饰大数字 "4" -->
+          <div class="bg-deco-number">4</div>
+
+          <!-- 顶部 Logo/标题 -->
+          <div class="text-center mb-6 z-10 relative">
+            <div
+              class="inline-block px-3 py-1 rounded-full border border-yellow-500/30 bg-yellow-500/10 text-yellow-300 text-xs tracking-widest mb-2"
+            >
+              ANNIVERSARY
+            </div>
+            <h2 class="text-4xl font-black ribbon-text tracking-tight">恭喜中奖!</h2>
+            <p class="text-gray-400 text-sm mt-1">LUCKY WINNER</p>
+          </div>
+
+          <!-- 头像区域 -->
+          <div class="relative flex justify-center mb-6 z-10">
+            <!-- 动态光环 -->
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-cyan-400 to-pink-500 rounded-full blur-xl opacity-40 animate-pulse w-32 h-32 mx-auto top-[-10px]"
+            ></div>
+            <div class="relative p-1 rounded-full bg-gradient-to-tr from-yellow-300 via-pink-500 to-cyan-400">
+              <img
+                id="winner-avatar"
+                src=""
+                class="w-28 h-28 rounded-full border-4 border-[#0f1016] object-cover bg-gray-800"
+              />
+            </div>
+          </div>
+
+          <!-- 获奖者信息 -->
+          <div class="text-center mb-8 z-10 relative">
+            <h3 id="winner-name" class="text-3xl text-white font-bold mb-1 drop-shadow-md">Unknown</h3>
+            <p
+              id="winner-id"
+              class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-300 font-mono"
+            >
+              ID: 888888
+            </p>
+          </div>
+
+          <!-- 奖品卡片 -->
+          <div class="bg-white/5 border border-white/10 rounded-xl p-4 mb-8 relative z-10 backdrop-blur-sm">
+            <div class="flex items-center gap-3">
+              <div class="text-3xl">🎁</div>
+              <div class="text-left">
+                <p class="text-gray-400 text-xs uppercase">Prize</p>
+                <p class="text-lg font-bold text-white leading-tight">4周年限定神秘大礼包</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 底部按钮 -->
+          <div class="grid grid-cols-2 gap-4 relative z-10">
+            <!-- 自动轮训倒计时显示 -->
+            <button
+              id="btn-auto-next"
+              class="btn-auto-next border border-white/20 text-gray-300 py-3 rounded-xl transition text-sm font-medium cursor-default"
+            >
+              <span id="auto-countdown-text">5秒后自动开始下一轮</span>
+            </button>
+            <!-- 立即开始下一轮按钮 -->
+            <button
+              onclick="manualStartNextRound()"
+              class="btn-gradient-theme text-white py-3 rounded-xl transition font-bold shadow-lg flex justify-center items-center gap-2 text-sm"
+            >
+              <span class="text-lg">▶️</span> 立即开始下一轮
+            </button>
+          </div>
+
+          <!-- 关闭按钮 -->
+          <button
+            onclick="manualCloseModal()"
+            class="absolute top-4 right-4 text-gray-500 hover:text-white z-20 transition transform hover:rotate-90"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /**
+       * 1. 初始化与配置
+       */
+      const CONFIG = {
+        cardCount: 200, // 星球上的卡片数量
+        radius: 600, // 星球半径
+        cardWidth: 60, // 【还原】卡片宽度
+        cardHeight: 35, // 【还原】卡片高度
+        spinSpeedMax: 0.08, // 最大旋转速度
+        spinAccel: 0.001, // 加速度
+        spinDecel: 0.0005, // 减速度
+        autoNextRoundDelay: 5000 // 开奖后固定等待时间 (5000ms = 5秒)
+      };
+
+      const STATE = {
+        IDLE: 0,
+        COUNTDOWN: 1,
+        SPINNING: 2,
+        PAUSED: 3,
+        STOPPING: 4,
+        RESULT: 5
+      };
+
+      let currentState = STATE.IDLE;
+      let scene, camera, renderer;
+      let planetGroup = new THREE.Group();
+      let cards = [];
+      let currentSpinSpeed = 0;
+
+      let autoTimeout = null; // 用于控制自动开始下一轮的 setTimeout 引用
+      let autoCountdownInterval = null; // 用于控制弹窗倒计时的 setInterval 引用
+
+      // 模拟用户数据
+      const generateUsers = (count) => {
+        const users = [];
+        const depts = ["技术部", "设计部", "运营部", "产品部", "市场部"];
+        for (let i = 0; i < count; i++) {
+          users.push({
+            id: 1000 + i,
+            name: `U_${Math.floor(Math.random() * 9000) + 1000}`,
+            dept: depts[Math.floor(Math.random() * depts.length)],
+            avatarColor: `hsl(${Math.random() * 360}, 70%, 60%)`
+          });
+        }
+        return users;
+      };
+      const users = generateUsers(CONFIG.cardCount);
+
+      /**
+       * 2. 【更新】纹理生成 - 创建带头像图标的矩形卡片纹理
+       */
+      function createCardTexture(user) {
+        const canvas = document.createElement("canvas");
+        canvas.width = 256; // 纹理尺寸
+        canvas.height = 140;
+        const ctx = canvas.getContext("2d");
+
+        // 1. 绘制矩形卡片背景 (渐变色)
+        const gradient = ctx.createLinearGradient(0, 0, 256, 140);
+        gradient.addColorStop(0, "rgba(20, 30, 80, 0.9)");
+        gradient.addColorStop(1, "rgba(40, 10, 60, 0.9)");
+
+        ctx.fillStyle = gradient;
+        ctx.strokeStyle = "rgba(100, 200, 255, 0.3)";
+        ctx.lineWidth = 4;
+
+        ctx.beginPath();
+        ctx.roundRect(5, 5, 246, 130, 15);
+        ctx.fill();
+        ctx.stroke();
+
+        // 2. 绘制圆形头像区域 (背景色)
+        const avatarX = 60;
+        const avatarY = 70;
+        const avatarRadius = 35;
+
+        ctx.beginPath();
+        ctx.arc(avatarX, avatarY, avatarRadius, 0, Math.PI * 2);
+        ctx.fillStyle = user.avatarColor; // 用户的专属颜色
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // 3. 【新增】在圆形区域绘制一个白色用户图标 (模拟头像图片)
+        ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+        const iconHeadRadius = 12;
+        const iconBodyHeight = 30;
+
+        // 绘制头部 (圆形)
+        ctx.beginPath();
+        ctx.arc(avatarX, avatarY - 10, iconHeadRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 绘制身体 (弧形/半圆)
+        ctx.beginPath();
+        ctx.arc(avatarX, avatarY + 15, 20, Math.PI * 1.1, Math.PI * 1.9); // 从底部略微向上弯曲的弧
+        ctx.fill();
+
+        // 4. 绘制文字信息
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 36px Arial";
+        ctx.fillText(user.name, 110, 70);
+
+        ctx.fillStyle = "#aaddff";
+        ctx.font = "24px Arial";
+        ctx.fillText(user.dept, 110, 105);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        return texture;
+      }
+
+      /**
+       * 3. Three.js 场景构建 (还原卡片几何体)
+       */
+      function init() {
+        scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050510, 0.0008);
+
+        camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 5000);
+        camera.position.z = 1200;
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.getElementById("canvas-container").appendChild(renderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0x00ffff, 1, 2000);
+        pointLight.position.set(500, 500, 500);
+        scene.add(pointLight);
+
+        // 星球核心
+        const coreGeometry = new THREE.SphereGeometry(CONFIG.radius - 20, 32, 32);
+        const coreMaterial = new THREE.MeshBasicMaterial({
+          color: 0x001133,
+          transparent: true,
+          opacity: 0.8,
+          wireframe: true
+        });
+        const core = new THREE.Mesh(coreGeometry, coreMaterial);
+        planetGroup.add(core);
+
+        const phi = Math.PI * (3 - Math.sqrt(5));
+
+        users.forEach((user, i) => {
+          const y = 1 - (i / (users.length - 1)) * 2;
+          const radiusAtY = Math.sqrt(1 - y * y);
+          const theta = phi * i;
+
+          const x = Math.cos(theta) * radiusAtY;
+          const z = Math.sin(theta) * radiusAtY;
+
+          const position = new THREE.Vector3(x, y, z).multiplyScalar(CONFIG.radius);
+
+          // 【还原】使用 PlaneGeometry (矩形)
+          const geometry = new THREE.PlaneGeometry(CONFIG.cardWidth, CONFIG.cardHeight);
+          const material = new THREE.MeshBasicMaterial({
+            map: createCardTexture(user),
+            side: THREE.DoubleSide,
+            transparent: true
+          });
+
+          const card = new THREE.Mesh(geometry, material);
+          card.position.copy(position);
+          card.lookAt(0, 0, 0);
+          card.userData = { id: user.id, data: user, originalPos: position.clone() };
+
+          planetGroup.add(card);
+          cards.push(card);
+        });
+
+        scene.add(planetGroup);
+        createStarfield();
+
+        window.addEventListener("resize", onWindowResize, false);
+        animate();
+
+        document.getElementById("user-count").innerText = users.length;
+      }
+
+      function createStarfield() {
+        const geometry = new THREE.BufferGeometry();
+        const vertices = [];
+        for (let i = 0; i < 1000; i++) {
+          vertices.push(
+            THREE.MathUtils.randFloatSpread(4000),
+            THREE.MathUtils.randFloatSpread(4000),
+            THREE.MathUtils.randFloatSpread(4000)
+          );
+        }
+        geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
+        const material = new THREE.PointsMaterial({ color: 0x888888, size: 2 });
+        const stars = new THREE.Points(geometry, material);
+        scene.add(stars);
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      /**
+       * 4. 动画循环
+       */
+      function animate(time) {
+        requestAnimationFrame(animate);
+        TWEEN.update(time);
+
+        if (currentState === STATE.SPINNING) {
+          if (currentSpinSpeed < CONFIG.spinSpeedMax) {
+            currentSpinSpeed += CONFIG.spinAccel;
+          }
+        } else if (currentState === STATE.PAUSED) {
+          currentSpinSpeed = 0;
+        } else if (currentState === STATE.STOPPING) {
+        } else {
+          currentSpinSpeed = 0.002;
+        }
+
+        // 只有在非结果状态和非停止状态才旋转
+        if (currentState !== STATE.RESULT && currentState !== STATE.STOPPING) {
+          planetGroup.rotation.y -= currentSpinSpeed;
+          planetGroup.rotation.x = Math.sin(time * 0.0005) * 0.1;
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      /**
+       * 5. 交互逻辑
+       */
+      const btnStart = document.getElementById("btn-start");
+      const btnPause = document.getElementById("btn-pause");
+      const btnStop = document.getElementById("btn-stop");
+      const statusText = document.getElementById("status-text");
+      const statusDot = document.getElementById("status-dot");
+      const countdownEl = document.getElementById("countdown-display");
+      const modal = document.getElementById("result-modal");
+      const modalCard = document.getElementById("result-card");
+      const autoCountdownText = document.getElementById("auto-countdown-text");
+
+      btnStart.addEventListener("click", () => {
+        if (currentState === STATE.IDLE) {
+          startCountdown();
+        }
+      });
+
+      btnPause.addEventListener("click", () => {
+        if (currentState === STATE.SPINNING) {
+          currentState = STATE.PAUSED;
+          updateStatus("PAUSED", "bg-yellow-500");
+          btnPause.innerHTML = "▶ 继续";
+        } else if (currentState === STATE.PAUSED) {
+          currentState = STATE.SPINNING;
+          updateStatus("SPINNING...", "bg-blue-500");
+          btnPause.innerHTML = "⏸ 暂停";
+        }
+      });
+
+      btnStop.addEventListener("click", () => {
+        if (currentState === STATE.SPINNING || currentState === STATE.PAUSED) {
+          stopLottery();
+        }
+      });
+
+      function updateStatus(text, colorClass) {
+        statusText.innerText = text;
+        statusDot.className = `w-2 h-2 rounded-full animate-pulse ${colorClass}`;
+      }
+
+      function startCountdown() {
+        currentState = STATE.COUNTDOWN;
+        updateStatus("PREPARING", "bg-yellow-500");
+        btnStart.classList.add("hidden");
+
+        let count = 3;
+        countdownEl.classList.remove("hidden");
+
+        const timer = setInterval(() => {
+          countdownEl.innerText = count;
+          countdownEl.classList.remove("countdown-anim");
+          void countdownEl.offsetWidth;
+          countdownEl.classList.add("countdown-anim");
+
+          if (count <= 0) {
+            clearInterval(timer);
+            countdownEl.classList.add("hidden");
+            startSpinning();
+          }
+          count--;
+        }, 800);
+      }
+
+      function startSpinning() {
+        currentState = STATE.SPINNING;
+        updateStatus("SPINNING...", "bg-blue-500");
+        btnPause.classList.remove("hidden");
+        btnStop.classList.remove("hidden");
+
+        new TWEEN.Tween(camera.position).to({ x: 0, y: 0, z: 1200 }, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+      }
+
+      function stopLottery() {
+        currentState = STATE.STOPPING;
+        updateStatus("LUCKY WINNER...", "bg-purple-500");
+        btnPause.classList.add("hidden");
+        btnStop.classList.add("hidden");
+
+        const winnerIndex = Math.floor(Math.random() * cards.length);
+        const winnerCard = cards[winnerIndex];
+        const winnerData = winnerCard.userData.data;
+
+        winnerCard.updateWorldMatrix(true, false);
+        const targetPos = new THREE.Vector3();
+        winnerCard.getWorldPosition(targetPos);
+
+        const cameraEndPos = targetPos
+          .clone()
+          .normalize()
+          .multiplyScalar(CONFIG.radius + 300);
+
+        new TWEEN.Tween(planetGroup.rotation)
+          .to({ y: planetGroup.rotation.y - 0.5 }, 1000)
+          .easing(TWEEN.Easing.Cubic.Out)
+          .start();
+
+        new TWEEN.Tween(camera.position)
+          .to({ x: cameraEndPos.x, y: cameraEndPos.y, z: cameraEndPos.z }, 2000)
+          .easing(TWEEN.Easing.Exponential.InOut)
+          .onUpdate(() => {
+            camera.lookAt(targetPos);
+          })
+          .onComplete(() => {
+            highlightWinner(winnerCard);
+            showResultModal(winnerData);
+          })
+          .start();
+      }
+
+      function highlightWinner(card) {
+        new TWEEN.Tween(card.scale).to({ x: 2.5, y: 2.5 }, 500).easing(TWEEN.Easing.Back.Out).start();
+
+        // 获胜卡片添加发光效果
+        // 使用 PlaneGeometry 的宽高比例来确定发光平面
+        const glowGeo = new THREE.PlaneGeometry(CONFIG.cardWidth * 1.5, CONFIG.cardHeight * 2.5);
+        const glowMat = new THREE.MeshBasicMaterial({
+          color: 0xffaa00,
+          transparent: true,
+          opacity: 0,
+          side: THREE.DoubleSide
+        });
+        const glow = new THREE.Mesh(glowGeo, glowMat);
+        glow.position.z = -1;
+        card.add(glow);
+
+        new TWEEN.Tween(glowMat).to({ opacity: 0.6 }, 500).yoyo(true).repeat(5).start();
+
+        createExplosion(card.getWorldPosition(new THREE.Vector3()));
+      }
+
+      function createExplosion(position) {
+        const particleCount = 80;
+        const geometry = new THREE.BufferGeometry();
+        const positions = [];
+        const velocities = [];
+        const colors = [];
+
+        const themeColors = [
+          new THREE.Color("#ff7eb3"),
+          new THREE.Color("#78ffd6"),
+          new THREE.Color("#f6d365"),
+          new THREE.Color("#ffffff")
+        ];
+
+        for (let i = 0; i < particleCount; i++) {
+          positions.push(position.x, position.y, position.z);
+
+          velocities.push((Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15);
+
+          const color = themeColors[Math.floor(Math.random() * themeColors.length)];
+          colors.push(color.r, color.g, color.b);
+        }
+
+        geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+        geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+
+        const material = new THREE.PointsMaterial({
+          size: 6,
+          vertexColors: true,
+          transparent: true,
+          blending: THREE.AdditiveBlending
+        });
+
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        const animateParticles = () => {
+          const positions = particles.geometry.attributes.position.array;
+          for (let i = 0; i < particleCount; i++) {
+            positions[i * 3] += velocities[i * 3];
+            positions[i * 3 + 1] += velocities[i * 3 + 1];
+            positions[i * 3 + 2] += velocities[i * 3 + 2];
+
+            velocities[i * 3 + 1] -= 0.1;
+          }
+          particles.geometry.attributes.position.needsUpdate = true;
+          material.opacity -= 0.015;
+
+          if (material.opacity > 0) {
+            requestAnimationFrame(animateParticles);
+          } else {
+            scene.remove(particles);
+          }
+        };
+        animateParticles();
+      }
+
+      /**
+       * 6. 自动轮训逻辑 (保持弹性入场效果)
+       */
+      function showResultModal(data) {
+        currentState = STATE.RESULT;
+        updateStatus("WINNER FOUND!", "bg-green-500");
+
+        document.getElementById("winner-name").innerText = data.name;
+        document.getElementById("winner-id").innerText = `ID: ${data.id} | ${data.dept}`;
+
+        const avatar = document.getElementById("winner-avatar");
+        avatar.style.backgroundColor = data.avatarColor;
+        // 简单的 SVG 占位头像，用于 modal
+        avatar.src =
+          "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjMwIiByPSIyMCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuOCIvPjxwYXRoIGQ9Ik0yMCA5MCBRNTAgNTAgODAgOTAiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjgiLz48L3N2Zz4=";
+
+        // 1. 设置初始状态 (scale-0)
+        modalCard.classList.remove("modal-enter-bounce");
+        modalCard.classList.remove("opacity-0", "scale-100");
+        modalCard.classList.add("scale-0"); // 设置初始缩放为 0
+
+        modal.classList.remove("hidden");
+
+        // 2. 延迟后启动弹性动画到最终状态 (scale-100)
+        setTimeout(() => {
+          // 应用弹性过渡
+          modalCard.classList.add("modal-enter-bounce");
+          // 移动到最终状态
+          modalCard.classList.remove("scale-0");
+          modalCard.classList.add("scale-100");
+        }, 50);
+
+        // 3. 设置自动开始下一轮的计时器
+        const delayInSeconds = CONFIG.autoNextRoundDelay / 1000;
+        let remaining = delayInSeconds;
+
+        clearTimeout(autoTimeout);
+        clearInterval(autoCountdownInterval);
+
+        autoCountdownText.innerText = `${remaining}秒后自动开始下一轮`;
+        autoCountdownInterval = setInterval(() => {
+          remaining--;
+          if (remaining >= 0) {
+            autoCountdownText.innerText = `${remaining}秒后自动开始下一轮`;
+          }
+          if (remaining < 0) {
+            clearInterval(autoCountdownInterval);
+          }
+        }, 1000);
+
+        autoTimeout = setTimeout(() => {
+          clearInterval(autoCountdownInterval);
+          autoStartNextRound();
+        }, CONFIG.autoNextRoundDelay);
+      }
+
+      function autoStartNextRound() {
+        closeResult(true);
+      }
+
+      window.manualStartNextRound = function () {
+        clearTimeout(autoTimeout);
+        clearInterval(autoCountdownInterval);
+        closeResult(true);
+      };
+
+      window.manualCloseModal = function () {
+        clearTimeout(autoTimeout);
+        clearInterval(autoCountdownInterval);
+        closeResult(false);
+      };
+
+      window.closeResult = function (autoStart = false) {
+        // 启动退出动画
+        modalCard.classList.remove("modal-enter-bounce");
+        modalCard.style.transition = "all 0.3s ease-out";
+
+        modalCard.classList.remove("scale-100");
+        modalCard.classList.add("scale-0", "opacity-0");
+
+        clearTimeout(autoTimeout);
+        clearInterval(autoCountdownInterval);
+
+        setTimeout(() => {
+          modal.classList.add("hidden");
+
+          // 清理所有动态样式，恢复到初始状态
+          modalCard.style.transition = "";
+          modalCard.classList.remove("opacity-0");
+          modalCard.classList.add("scale-0");
+
+          resetState();
+
+          if (autoStart) {
+            startCountdown();
+          } else {
+            btnStart.classList.remove("hidden");
+          }
+        }, 300);
+      };
+
+      function resetState() {
+        resetCamera();
+
+        cards.forEach((c) => {
+          c.scale.set(1, 1, 1);
+          c.children = [];
+        });
+
+        btnPause.classList.add("hidden");
+        btnStop.classList.add("hidden");
+        btnPause.innerHTML = "⏸ 暂停";
+
+        currentState = STATE.IDLE;
+        updateStatus("READY", "bg-green-500");
+      }
+
+      window.resetCamera = function () {
+        new TWEEN.Tween(camera.position)
+          .to({ x: 0, y: 0, z: 1200 }, 1500)
+          .easing(TWEEN.Easing.Quadratic.InOut)
+          .onUpdate(() => {
+            camera.lookAt(0, 0, 0);
+          })
+          .start();
+      };
+
+      window.toggleFullScreen = function () {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen();
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      };
+
+      init();
+    </script>
+  </body>
+</html>
