@@ -1,11 +1,11 @@
-import { Field } from "@chameleon/engine-core";
+import { Field } from "@chameleon/core";
 import React from "react";
 import DateWidget from "./widgets/advanced/DateWidget";
 import RateWidget from "./widgets/advanced/RateWidget";
 import SliderWidget from "./widgets/advanced/SliderWidget";
 import UploadWidget from "./widgets/advanced/UploadWidget";
 import CheckboxWidget from "./widgets/base/CheckboxWidget";
-import RadioWidget from "./widgets/base/RadioWidget";
+import { RadioWidget } from "./widgets/base/RadioWidget";
 import SelectWidget from "./widgets/base/SelectWidget";
 import SwitchWidget from "./widgets/base/SwitchWidget";
 import TextAreaWidget from "./widgets/base/TextAreaWidget";

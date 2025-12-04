@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { useBuilderStore } from "@chameleon/engine-core";
+import { useBuilderStore } from "@chameleon/core";
 import { OptionsEditor } from "@chameleon/form-ui";
 import { ArrowLeft, Edit2, Trash2 } from "lucide-react";
 const REGEX_PRESETS = [

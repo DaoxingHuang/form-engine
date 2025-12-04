@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useBuilderStore } from "@chameleon/engine-core";
+import { useBuilderStore } from "@chameleon/core";
 import { Plus, Star, Trash2, Upload } from "lucide-react";
 const Canvas = () => {
     const { fields, selectedFieldId, setSelectedFieldId, removeField, setEditingSubFieldId } = useBuilderStore();

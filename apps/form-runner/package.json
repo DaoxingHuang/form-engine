@@ -11,7 +11,7 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@chameleon/engine-core": "workspace:*",
+    "@chameleon/core": "workspace:*",
     "@chameleon/default-widgets": "workspace:*",
     "lucide-react": "^0.292.0",
     "clsx": "^2.0.0",

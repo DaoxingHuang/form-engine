@@ -13,7 +13,7 @@
     "react-dom": "^18.0.0"
   },
   "dependencies": {
-    "@chameleon/engine-core": "workspace:*",
+    "@chameleon/core": "workspace:*",
     "@chameleon/form-ui": "workspace:*",
     "lucide-react": "^0.263.1"
   },

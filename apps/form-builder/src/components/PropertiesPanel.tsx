@@ -1,4 +1,4 @@
-import { useBuilderStore } from "@chameleon/engine-core";
+import { useBuilderStore } from "@chameleon/core";
 import { OptionsEditor } from "@chameleon/form-ui";
 import { ArrowLeft, Edit2, Trash2 } from "lucide-react";
 import React from "react";

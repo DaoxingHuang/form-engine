@@ -1,4 +1,4 @@
-import { Field, useBuilderStore } from "@chameleon/engine-core";
+import { Field, useBuilderStore } from "@chameleon/core";
 import { Plus, Star, Trash2, Upload } from "lucide-react";
 import React from "react";
 

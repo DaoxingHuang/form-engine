@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useBuilderStore } from "@chameleon/engine-core";
+import { useBuilderStore } from "@chameleon/core";
 import { Calendar, CheckSquare, CircleDot, Hash, List, Sliders, Star, ToggleLeft, Type, Upload } from "lucide-react";
 const COMPONENT_TYPES = [
     { type: "text", label: "单行文本", icon: _jsx(Type, { size: 16 }), group: "basic" },

@@ -13,7 +13,7 @@ This project is a Monorepo managed by pnpm workspaces.
 
 ### Packages
 
-- **packages/engine-core**: Core logic, state management (Zustand), and schema definitions.
+- **packages/core**: Core logic, state management (Zustand), and schema definitions.
 - **packages/form-ui**: Shared UI components and utilities.
 - **packages/default-widgets**: Default set of form widgets (Input, Select, Date, etc.) and the `FormRunner` component.
 - **packages/ts-config**: Shared TypeScript configurations.

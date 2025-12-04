@@ -1,4 +1,4 @@
-import { Field } from "@chameleon/engine-core";
+import { Field } from "@chameleon/core";
 import React from "react";
 
 interface WidgetProps {

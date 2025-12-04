@@ -1,5 +1,5 @@
-import { Field } from "@chameleon/engine-core";
-import { FileText, Image as ImageIcon, Upload, X } from "lucide-react";
+import { Field } from "@chameleon/core";
+import { FileCheck, FileText, Image as ImageIcon, Upload, User, X } from "lucide-react";
 import React, { useState } from "react";
 
 interface WidgetProps {
@@ -12,6 +12,7 @@ interface WidgetProps {
 const UploadWidget: React.FC<WidgetProps> = ({ field, value, onChange, error }) => {
   const [uploading, setUploading] = useState(false);
   const safeValue = value === undefined || value === null ? "" : value;
+  const lowerId = field.id.toLowerCase();
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (field.disabled) return;
@@ -30,6 +31,66 @@ const UploadWidget: React.FC<WidgetProps> = ({ field, value, onChange, error }) 
     reader.readAsDataURL(file);
   };
 
+  // 1. Avatar Upload Style
+  if (lowerId.includes("avatar") || lowerId.includes("photo")) {
+    return (
+      <div className="flex flex-col items-center p-4 border rounded-lg bg-gray-50 border-dashed hover:border-indigo-300 transition-colors">
+        <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden mb-2 border-2 border-white shadow-sm relative group cursor-pointer">
+          {safeValue ? (
+            <img src={safeValue} alt="Avatar" className="w-full h-full object-cover" />
+          ) : (
+            <User size={32} className="text-gray-400" />
+          )}
+          <input
+            type="file"
+            className="absolute inset-0 opacity-0 cursor-pointer"
+            accept="image/*"
+            onChange={handleFileUpload}
+            disabled={field.disabled}
+          />
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-bold transition-opacity">
+            更换
+          </div>
+        </div>
+        <span className="text-xs text-gray-500 font-medium">点击上传头像</span>
+        {error && <span className="text-xs text-red-500 mt-1">{error}</span>}
+      </div>
+    );
+  }
+
+  // 2. Contract/Document Upload Style
+  if (lowerId.includes("contract") || lowerId.includes("doc") || lowerId.includes("file")) {
+    return (
+      <div className="space-y-1">
+        <div className="border border-blue-100 bg-blue-50/50 p-3 rounded-lg flex items-center justify-between group hover:bg-blue-50 transition-colors">
+          <div className="flex items-center gap-3">
+            <div className="bg-blue-100 p-2 rounded-lg">
+              <FileCheck className="text-blue-600" size={20} />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-blue-900">文档上传</div>
+              <div className="text-[10px] text-blue-500">{safeValue ? "已选择文件" : "支持 PDF, Word"}</div>
+            </div>
+          </div>
+          <label className="bg-white text-blue-600 border border-blue-200 px-4 py-1.5 rounded-md text-xs font-medium cursor-pointer hover:shadow-sm transition-all">
+            {safeValue ? "重新上传" : "选择文件"}
+            <input
+              type="file"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) onChange(file.name); // Simulate upload for doc
+              }}
+              disabled={field.disabled}
+            />
+          </label>
+        </div>
+        {error && <span className="text-xs text-red-500">{error}</span>}
+      </div>
+    );
+  }
+
+  // 3. Default Upload Style
   return (
     <div className="space-y-2">
       <label

@@ -1,4 +1,4 @@
-import { Field } from "@chameleon/engine-core";
+import { Field } from "@chameleon/core";
 import { AlertCircle, Plus, X } from "lucide-react";
 import React from "react";
 import { WidgetFactory } from "../../WidgetFactory";

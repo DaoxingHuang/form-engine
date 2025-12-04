@@ -108,12 +108,12 @@ importers:
 
   apps/form-builder:
     dependencies:
+      '@chameleon/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@chameleon/default-widgets':
         specifier: workspace:*
         version: link:../../packages/default-widgets
-      '@chameleon/engine-core':
-        specifier: workspace:*
-        version: link:../../packages/engine-core
       '@chameleon/form-ui':
         specifier: workspace:*
         version: link:../../packages/form-ui
@@ -163,12 +163,12 @@ importers:
 
   apps/form-runner:
     dependencies:
+      '@chameleon/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@chameleon/default-widgets':
         specifier: workspace:*
         version: link:../../packages/default-widgets
-      '@chameleon/engine-core':
-        specifier: workspace:*
-        version: link:../../packages/engine-core
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
@@ -213,11 +213,27 @@ importers:
         specifier: ^4.4.5
         version: 4.5.14(@types/node@24.7.1)(terser@5.44.0)
 
+  packages/core:
+    dependencies:
+      zustand:
+        specifier: ^4.0.0
+        version: 4.5.7(@types/react@19.2.2)(react@18.3.1)
+    devDependencies:
+      '@chameleon/ts-config':
+        specifier: workspace:*
+        version: link:../ts-config
+      tsup:
+        specifier: ^8.0.0
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+
   packages/default-widgets:
     dependencies:
-      '@chameleon/engine-core':
+      '@chameleon/core':
         specifier: workspace:*
-        version: link:../engine-core
+        version: link:../core
       '@chameleon/form-ui':
         specifier: workspace:*
         version: link:../form-ui
@@ -230,28 +246,6 @@ importers:
       react-dom:
         specifier: ^18.0.0
         version: 18.3.1(react@18.3.1)
-    devDependencies:
-      '@chameleon/ts-config':
-        specifier: workspace:*
-        version: link:../ts-config
-      '@types/react':
-        specifier: ^18.2.0
-        version: 18.3.27
-      '@types/react-dom':
-        specifier: ^18.2.0
-        version: 18.3.7(@types/react@18.3.27)
-      tsup:
-        specifier: ^8.0.0
-        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(typescript@5.9.3)(yaml@2.8.1)
-      typescript:
-        specifier: ^5.0.0
-        version: 5.9.3
-
-  packages/engine-core:
-    dependencies:
-      zustand:
-        specifier: ^4.0.0
-        version: 4.5.7(@types/react@19.2.2)(react@18.3.1)
     devDependencies:
       '@chameleon/ts-config':
         specifier: workspace:*
@@ -278,12 +272,6 @@ importers:
       '@chameleon/ts-config':
         specifier: workspace:*
         version: link:../ts-config
-      '@types/react':
-        specifier: ^18.2.0
-        version: 18.3.27
-      '@types/react-dom':
-        specifier: ^18.2.0
-        version: 18.3.7(@types/react@18.3.27)
       clsx:
         specifier: ^2.0.0
         version: 2.1.1

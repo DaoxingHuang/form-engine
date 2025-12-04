@@ -1,4 +1,4 @@
-import { Field } from "@chameleon/engine-core";
+import { Field } from "@chameleon/core";
 import React from "react";
 
 interface WidgetProps {
@@ -7,7 +7,7 @@ interface WidgetProps {
   onChange: (value: any) => void;
 }
 
-const RadioWidget: React.FC<WidgetProps> = ({ field, value, onChange }) => {
+export const RadioWidget: React.FC<WidgetProps> = ({ field, value, onChange }) => {
   return (
     <div className="flex flex-wrap gap-4 pt-1">
       {field.options &&
@@ -28,5 +28,3 @@ const RadioWidget: React.FC<WidgetProps> = ({ field, value, onChange }) => {
     </div>
   );
 };
-
-export default RadioWidget;
