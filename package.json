@@ -1,19 +1,13 @@
 {
-  "name": "luckyboy",
-  "version": "1.0.0",
-  "description": "A collection of high-performance, interactive 3D components and utilities.",
-  "main": "index.js",
+  "name": "@chameleon/monorepo",
+  "private": true,
   "scripts": {
-    "dev:examples": "pnpm -w --filter \"packages/examples\" dev",
-    "dev:devtools": "pnpm -w --filter \"p,ckages/devtools\" dev",
-    "build": "pnpm -w run build",
-    "build:types": "pnpm -w run build:types",
-    "build:planet-star": "pnpm --filter @lucky-boy/planet-star build",
-    "test": "pnpm -w -r test",
-    "lint": "eslint packages/** --ext .js,.ts,.tsx,.json --ignore-pattern node_modules/*",
-    "lint:fix": "eslint packages/** --ext .js,.ts,.tsx,.json --ignore-pattern node_modules/* --fix",
-    "prepare": "husky install",
-    "clean": "pnpm -w run clean"
+    "dev:builder": "pnpm --filter @chameleon/form-builder dev",
+    "dev:runner": "pnpm --filter @chameleon/form-runner dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "eslint . --ext .ts,.tsx",
+    "clean": "rm -rf node_modules **/*/node_modules"
   },
   "keywords": [
     "3D",
@@ -41,8 +35,8 @@
     "@rollup/plugin-node-resolve": "^16.0.2",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.1.4",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.1",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
     "@typescript-eslint/eslint-plugin": "^8.46.3",
     "@typescript-eslint/parser": "^8.46.3",
     "eslint": "^8.57.1",

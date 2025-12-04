@@ -1,39 +1,44 @@
-# Lucky Boy
+# Chameleon Form Engine
 
-**Lucky Boy** is a project containing interactive 3D components, primarily focusing on lottery and visualization tools.
+A modern, high-performance form engine built with React, TypeScript, and Tailwind CSS.
 
-## Packages
+## Project Structure
 
-### PlanetStar (`@lucky-boy/planet-star`)
+This project is a Monorepo managed by pnpm workspaces.
 
-A specialized 3D lottery component featuring a rotating planet of user cards.
+### Apps
 
-- **Location**: `packages/planet-star`
-- **Key Tech**: React, Three.js, Zustand
-- **Features**:
-  - 3D Visualization of user cards on a sphere
-  - Lottery Logic (Start, Stop, Winner Selection)
-  - Screen Recording & Screenshot tools
-  - Async Data Loading
+- **apps/form-builder**: A visual drag-and-drop form builder application.
+- **apps/form-runner**: A standalone form renderer application.
+
+### Packages
+
+- **packages/engine-core**: Core logic, state management (Zustand), and schema definitions.
+- **packages/form-ui**: Shared UI components and utilities.
+- **packages/default-widgets**: Default set of form widgets (Input, Select, Date, etc.) and the `FormRunner` component.
+- **packages/ts-config**: Shared TypeScript configurations.
+
+## Getting Started
+
+1. **Install Dependencies**
+
+   ```bash
+   pnpm install
+   ```
+
+2. **Start Form Builder**
+
+   ```bash
+   pnpm dev:builder
+   ```
+
+3. **Start Form Runner**
+
+   ```bash
+   pnpm dev:runner
+   ```
 
 ## Development
 
-### Installation
-
-```bash
-pnpm install
-```
-
-### Running Examples
-
-To run the example project:
-
-```bash
-pnpm dev:examples
-```
-
-### Building
-
-```bash
-pnpm build:core
-```
+- **Build all packages**: `pnpm build`
+- **Clean**: `pnpm clean`
