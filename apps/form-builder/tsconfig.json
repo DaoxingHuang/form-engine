@@ -1,6 +1,8 @@
 {
   "extends": "@chameleon/ts-config/react.json",
   "compilerOptions": {
+    "composite": false,
+    "noEmit": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
