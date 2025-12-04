@@ -15,7 +15,7 @@
 //     "skipLibCheck": true,
 //     "paths": {
 //       "@/*": ["src/*"],
-//        "@chameleon/core": ["../../core/src"]
+//        "@origami/core": ["../../core/src"]
 //     }
 //   },
 //   "exclude": ["node_modules", "types", "packages/*/tests"]
@@ -52,24 +52,14 @@
     // "experimentalDecorators": true,
     // // Optional: keep path mapping local to package for internal imports.
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@chameleon/core": [
-        "../../core/src"
-      ]
+      "@/*": ["src/*"],
+      "@origami/core": ["../../core/src"]
     }
   },
   // Include only package sources and local type helpers.
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   // Exclude build / generated / external folders.
-  "exclude": [
-    "node_modules",
-    "dist",
-    "packages/*/tests"
-  ],
+  "exclude": ["node_modules", "dist", "packages/*/tests"],
   // If this package depends on other local packages, add project references here
   // to enable `tsc --build` to build in dependency order and use incremental builds.
   // Example:

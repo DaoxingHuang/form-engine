@@ -1,5 +1,5 @@
 {
-  "name": "@chameleon/examples",
+  "name": "@origami/forms",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -11,7 +11,8 @@
     "@tweenjs/tween.js": "^18.6.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@chameleon/form-engine": "workspace:*",
+    "@origami/form-builder": "workspace:*",
+    "@origami/default-widgets": "workspace:*",
     "tailwindcss": "^3.4.18",
     "three": "^0.158.0",
     "zustand": "^4.0.0"

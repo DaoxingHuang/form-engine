@@ -1,4 +1,4 @@
-import { Field } from "@chameleon/core";
+import { Field } from "@origami/core";
 import { FileCheck, FileText, Image as ImageIcon, Upload, User, X } from "lucide-react";
 import React, { useState } from "react";
 

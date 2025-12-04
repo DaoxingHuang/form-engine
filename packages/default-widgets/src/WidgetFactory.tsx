@@ -1,4 +1,4 @@
-import { Field } from "@chameleon/core";
+import { Field } from "@origami/core";
 import React from "react";
 import DateWidget from "./widgets/advanced/DateWidget";
 import RateWidget from "./widgets/advanced/RateWidget";

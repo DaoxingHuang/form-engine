@@ -1,4 +1,4 @@
-import { Field, useRunnerStore } from "@chameleon/core";
+import { Field, useRunnerStore } from "@origami/core";
 import { AlertCircle, Eye, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { WidgetFactory } from "./WidgetFactory";

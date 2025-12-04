@@ -1,5 +1,5 @@
 {
-  "extends": "@chameleon/ts-config/react.json",
+  "extends": "@origami/ts-config/react.json",
   "compilerOptions": {
     "composite": false,
     "noEmit": true,

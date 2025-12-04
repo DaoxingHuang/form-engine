@@ -1,9 +1,10 @@
 {
-  "name": "@chameleon/monorepo",
+  "name": "@origami/monorepo",
   "private": true,
   "scripts": {
-    "dev:builder": "pnpm --filter @chameleon/form-builder dev",
-    "dev:runner": "pnpm --filter @chameleon/form-runner dev",
+    "dev:builder": "pnpm --filter @origami/form-builder dev",
+    "dev:runner": "pnpm --filter @origami/form-runner dev",
+    "dev:forms": "pnpm --filter @origami/forms dev",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "eslint . --ext .ts,.tsx",

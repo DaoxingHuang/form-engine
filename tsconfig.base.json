@@ -47,7 +47,7 @@
     "baseUrl": ".",
     // Path aliases useful for monorepo local imports.
     "paths": {
-      "@chameleon/*": ["packages/*/src"]
+      "@origami/*": ["packages/*/src", "apps/*/src"]
     },
     // Where to look for ambient type definitions (default: node_modules/@types).
     "typeRoots": ["node_modules/@types"],

@@ -1,5 +1,5 @@
-import { Field } from "@chameleon/core";
-import { FormRunner } from "@chameleon/default-widgets";
+import { Field } from "@origami/core";
+import { FormRunner } from "@origami/default-widgets";
 import { CheckCircle } from "lucide-react";
 import { useState } from "react";
 

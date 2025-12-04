@@ -1,8 +1,10 @@
 {
-  "name": "@chameleon/form-builder",
+  "name": "@origami/form-builder",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -11,9 +13,9 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@chameleon/core": "workspace:*",
-    "@chameleon/form-ui": "workspace:*",
-    "@chameleon/default-widgets": "workspace:*",
+    "@origami/core": "workspace:*",
+    "@origami/form-ui": "workspace:*",
+    "@origami/default-widgets": "workspace:*",
     "lucide-react": "^0.292.0",
     "clsx": "^2.0.0",
     "tailwind-merge": "^1.14.0"
@@ -27,6 +29,6 @@
     "tailwindcss": "^3.3.3",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
-    "@chameleon/ts-config": "workspace:*"
+    "@origami/ts-config": "workspace:*"
   }
 }

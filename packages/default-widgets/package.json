@@ -1,5 +1,5 @@
 {
-  "name": "@chameleon/default-widgets",
+  "name": "@origami/default-widgets",
   "version": "1.0.0",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -13,12 +13,12 @@
     "react-dom": "^18.0.0"
   },
   "dependencies": {
-    "@chameleon/core": "workspace:*",
-    "@chameleon/form-ui": "workspace:*",
+    "@origami/core": "workspace:*",
+    "@origami/form-ui": "workspace:*",
     "lucide-react": "^0.263.1"
   },
   "devDependencies": {
-    "@chameleon/ts-config": "workspace:*",
+    "@origami/ts-config": "workspace:*",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0"
   }

@@ -1,4 +1,4 @@
-import { Field } from "@chameleon/core";
+import { Field } from "@origami/core";
 import React from "react";
 
 interface WidgetProps {

@@ -1,5 +1,5 @@
 {
-  "name": "@chameleon/core",
+  "name": "@origami/core",
   "version": "1.0.0",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -12,7 +12,7 @@
     "zustand": "^4.0.0"
   },
   "devDependencies": {
-    "@chameleon/ts-config": "workspace:*",
+    "@origami/ts-config": "workspace:*",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0"
   }
