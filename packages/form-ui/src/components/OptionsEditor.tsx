@@ -1,5 +1,7 @@
 import { Plus, X } from "lucide-react";
-import { Button, Input } from "./base";
+import React from "react";
+import { Button } from "./base";
+import { Input } from "./Input";
 
 export const OptionsEditor = ({
   options,
@@ -32,12 +34,12 @@ export const OptionsEditor = ({
           <Input
             className="flex-[1.5] h-7 text-xs"
             value={opt.label}
-            onChange={(e) => updateOption(idx, "label", e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateOption(idx, "label", e.target.value)}
           />
           <Input
             className="flex-1 h-7 text-xs font-mono text-gray-600"
             value={opt.value}
-            onChange={(e) => updateOption(idx, "value", e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateOption(idx, "value", e.target.value)}
           />
           <button onClick={() => removeOption(idx)} className="text-gray-400 hover:text-red-500">
             <X size={14} />

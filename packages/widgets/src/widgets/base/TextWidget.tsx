@@ -1,4 +1,5 @@
 import { Field } from "@origami/core";
+import { Input } from "@origami/form-ui";
 import React from "react";
 
 interface WidgetProps {
@@ -12,12 +13,12 @@ const TextWidget: React.FC<WidgetProps> = ({ field, value, onChange, error }) =>
   const safeValue = value === undefined || value === null ? "" : value;
   return (
     <div className="relative">
-      <input
+      <Input
         type={field.type === "number" ? "number" : "text"}
         value={safeValue}
         onChange={(e) => onChange(field.type === "number" ? Number(e.target.value) : e.target.value)}
         disabled={field.disabled}
-        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all ${error ? "border-red-500 bg-red-50" : "border-gray-200 hover:border-gray-300"} ${field.disabled ? "bg-gray-100 cursor-not-allowed" : ""}`}
+        error={!!error}
         placeholder={field.placeholder}
         maxLength={field.maxLength}
       />

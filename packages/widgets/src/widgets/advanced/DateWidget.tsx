@@ -1,4 +1,5 @@
 import { Field } from "@origami/core";
+import { Input } from "@origami/form-ui";
 import React from "react";
 
 interface DateWidgetProps {
@@ -15,21 +16,16 @@ const DateWidget: React.FC<DateWidgetProps> = ({ field, value, onChange, error }
         {field.title}
         {field.required && <span className="text-red-500 ml-1">*</span>}
       </label>
-      <input
+      <Input
         type="datetime-local"
         value={value || ""}
         onChange={(e) => onChange(e.target.value)}
         disabled={field.disabled}
-        className={`
-          w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-          ${error ? "border-red-500" : "border-gray-300"}
-          ${field.disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"}
-        `}
+        error={!!error}
       />
       {field.description && <p className="text-xs text-gray-500">{field.description}</p>}
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   );
 };
-
 export default DateWidget;

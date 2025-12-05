@@ -1,6 +1,6 @@
 import { parseSchemaToFields } from "@origami/core";
-import { FormRunner } from "@origami/default-widgets";
 import { FormBuilder } from "@origami/form-builder";
+import { FormRunner } from "@origami/widgets";
 import { useState } from "react";
 
 export default function App() {

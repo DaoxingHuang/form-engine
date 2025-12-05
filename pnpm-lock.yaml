@@ -111,12 +111,12 @@ importers:
       '@origami/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@origami/default-widgets':
-        specifier: workspace:*
-        version: link:../../packages/default-widgets
       '@origami/form-ui':
         specifier: workspace:*
         version: link:../../packages/form-ui
+      '@origami/widgets':
+        specifier: workspace:*
+        version: link:../../packages/widgets
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
@@ -166,9 +166,9 @@ importers:
       '@origami/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@origami/default-widgets':
+      '@origami/widgets':
         specifier: workspace:*
-        version: link:../../packages/default-widgets
+        version: link:../../packages/widgets
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
@@ -215,12 +215,12 @@ importers:
 
   apps/forms:
     dependencies:
-      '@origami/default-widgets':
-        specifier: workspace:*
-        version: link:../../packages/default-widgets
       '@origami/form-builder':
         specifier: workspace:*
         version: link:../form-builder
+      '@origami/widgets':
+        specifier: workspace:*
+        version: link:../../packages/widgets
       '@tweenjs/tween.js':
         specifier: ^18.6.4
         version: 18.6.4
@@ -305,34 +305,6 @@ importers:
         specifier: ^5.0.0
         version: 5.9.3
 
-  packages/default-widgets:
-    dependencies:
-      '@origami/core':
-        specifier: workspace:*
-        version: link:../core
-      '@origami/form-ui':
-        specifier: workspace:*
-        version: link:../form-ui
-      lucide-react:
-        specifier: ^0.263.1
-        version: 0.263.1(react@18.3.1)
-      react:
-        specifier: ^18.0.0
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.0.0
-        version: 18.3.1(react@18.3.1)
-    devDependencies:
-      '@origami/ts-config':
-        specifier: workspace:*
-        version: link:../ts-config
-      tsup:
-        specifier: ^8.0.0
-        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(typescript@5.9.3)(yaml@2.8.1)
-      typescript:
-        specifier: ^5.0.0
-        version: 5.9.3
-
   packages/form-ui:
     dependencies:
       lucide-react:
@@ -375,6 +347,34 @@ importers:
       vitest:
         specifier: ^0.32.0
         version: 0.32.4(jsdom@27.2.0)(terser@5.44.0)
+
+  packages/widgets:
+    dependencies:
+      '@origami/core':
+        specifier: workspace:*
+        version: link:../core
+      '@origami/form-ui':
+        specifier: workspace:*
+        version: link:../form-ui
+      lucide-react:
+        specifier: ^0.263.1
+        version: 0.263.1(react@18.3.1)
+      react:
+        specifier: ^18.0.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.0.0
+        version: 18.3.1(react@18.3.1)
+    devDependencies:
+      '@origami/ts-config':
+        specifier: workspace:*
+        version: link:../ts-config
+      tsup:
+        specifier: ^8.0.0
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
 
 packages:
 

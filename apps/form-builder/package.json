@@ -15,7 +15,7 @@
     "react-dom": "^18.2.0",
     "@origami/core": "workspace:*",
     "@origami/form-ui": "workspace:*",
-    "@origami/default-widgets": "workspace:*",
+    "@origami/widgets": "workspace:*",
     "lucide-react": "^0.292.0",
     "clsx": "^2.0.0",
     "tailwind-merge": "^1.14.0"

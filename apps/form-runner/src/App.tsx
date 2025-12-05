@@ -1,5 +1,5 @@
 import { Field } from "@origami/core";
-import { FormRunner } from "@origami/default-widgets";
+import { FormRunner } from "@origami/widgets";
 import { CheckCircle } from "lucide-react";
 import { useState } from "react";
 
