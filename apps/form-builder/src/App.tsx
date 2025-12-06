@@ -1,4 +1,4 @@
-import FormBuilder from "./FormBuilder";
+import { FormBuilder } from "@origami/editor";
 
 export default function App() {
   const handlePublish = (schema: any) => {

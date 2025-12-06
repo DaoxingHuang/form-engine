@@ -1,0 +1,1 @@
+{"version":3,"file":"OptionsEditor.d.ts","sourceRoot":"","sources":["OptionsEditor.tsx"],"names":[],"mappings":"AAKA;;;;;GAKG;AACH,eAAO,MAAM,aAAa,GAAI,uBAG3B;IACD,OAAO,CAAC,EAAE;QAAE,KAAK,EAAE,MAAM,CAAC;QAAC,KAAK,EAAE,MAAM,CAAA;KAAE,EAAE,CAAC;IAC7C,QAAQ,EAAE,CAAC,IAAI,EAAE,GAAG,EAAE,KAAK,IAAI,CAAC;CACjC,4CA+CA,CAAC"}

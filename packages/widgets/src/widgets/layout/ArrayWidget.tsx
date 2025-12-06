@@ -1,18 +1,8 @@
-import { Field } from "@origami/core";
 import { AlertCircle, Plus, X } from "lucide-react";
-import React from "react";
 import { WidgetFactory } from "../../WidgetFactory";
+import type { RunnerWidgetComponent } from "../../types";
 
-interface WidgetProps {
-  field: Field;
-  value: any;
-  onChange: (value: any) => void;
-  error?: string;
-  path: string;
-  errors: Record<string, string>;
-}
-
-const ArrayWidget: React.FC<WidgetProps> = ({ field, value, onChange, path, errors }) => {
+const ArrayWidget: RunnerWidgetComponent = ({ field, value, onChange, path = field.id, errors = {} }) => {
   const items = Array.isArray(value) ? value : [];
 
   const handleAdd = () => {

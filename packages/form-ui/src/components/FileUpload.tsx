@@ -2,6 +2,9 @@ import { FileCheck, FileText, Image as ImageIcon, Upload, X } from "lucide-react
 import React, { useRef } from "react";
 import { cn } from "./base";
 
+/**
+ * Props for the {@link FileUpload} component.
+ */
 export interface FileUploadProps {
   value?: string;
   onChange?: (value: string) => void;
@@ -13,6 +16,13 @@ export interface FileUploadProps {
   onUpload?: (file: File) => Promise<string>;
 }
 
+/**
+ * Generic file upload component that supports size limits and async upload.
+ *
+ * When `onUpload` is provided, the component will call it with the selected
+ * file and expects a URL (or identifier) to be returned. Otherwise it falls
+ * back to a local `URL.createObjectURL` preview.
+ */
 export const FileUpload: React.FC<FileUploadProps> = ({
   value,
   onChange,

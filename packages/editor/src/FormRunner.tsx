@@ -1,0 +1,224 @@
+import type { Field } from "@origami/core";
+import { useRunnerStore } from "@origami/core";
+import { WidgetFactory, type RunnerWidgetMap } from "@origami/widgets";
+import { AlertCircle, Eye, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
+
+/**
+ * Props for {@link FormRunner} component.
+ *
+ * {@link FormRunner} 组件的属性定义。
+ */
+interface FormRunnerProps {
+  /**
+   * Field definitions (usually generated from JSON Schema).
+   *
+   * 字段定义数组，通常由 Schema 解析而来，用于驱动表单渲染。
+   */
+  fields: Field[];
+
+  /**
+   * Optional initial form values.
+   *
+   * 可选的初始表单数据，用于回填或编辑已有提交。
+   */
+  initialValues?: Record<string, any>;
+
+  /**
+   * Callback fired when validation passes and user confirms submit.
+   *
+   * 当校验通过且用户确认提交时触发，参数为完整表单数据。
+   */
+  onSubmit?: (data: any) => void;
+
+  /**
+   * Optional extra className applied to the root container.
+   *
+   * 根容器的额外样式类名，便于在宿主应用中自定义布局。
+   */
+  className?: string;
+  /**
+   * Optional custom widget map to override default field-type widgets.
+   *
+   * This allows host applications to provide their own React components
+   * for specific field types (e.g. a custom upload widget) while keeping
+   * the runner's data flow unchanged.
+   */
+  widgetsOverride?: RunnerWidgetMap;
+}
+
+/**
+ * Runtime form renderer React component.
+ *
+ * 表单运行器组件：
+ * - 根据字段定义自动渲染输入控件；
+ * - 通过 `useRunnerStore` 管理状态和校验；
+ * - 内置数据预览弹窗，支持 JSON / 可视化两种视图。
+ */
+export const FormRunner: React.FC<FormRunnerProps> = ({
+  fields,
+  initialValues,
+  onSubmit,
+  className,
+  widgetsOverride
+}) => {
+  const { formData, errors, setFormData, updateField, validate } = useRunnerStore();
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewTab, setPreviewTab] = useState<"visual" | "json">("visual");
+
+  useEffect(() => {
+    if (initialValues) {
+      setFormData(initialValues);
+    } else {
+      // Initialize defaults
+      const defaults: Record<string, any> = {};
+      fields.forEach((f) => {
+        if (f.type === "array") defaults[f.id] = [];
+        else if (f.type === "checkbox") defaults[f.id] = [];
+        else if (f.type === "switch") defaults[f.id] = false;
+        else if (f.type === "number") defaults[f.id] = f.minimum || 0;
+        else defaults[f.id] = "";
+      });
+      setFormData(defaults);
+    }
+  }, [fields, initialValues, setFormData]);
+
+  const handleSubmit = () => {
+    if (validate(fields)) {
+      onSubmit?.(formData);
+    } else {
+      alert("请检查表单中的错误项");
+    }
+  };
+
+  return (
+    <div className={`relative h-full ${className || ""}`}>
+      <div className="h-full overflow-y-auto p-8 pb-32 space-y-6">
+        {fields.map((field) => (
+          <div key={field.id} className="space-y-1.5">
+            <label className="block text-sm font-semibold text-gray-700">
+              {field.title} {field.required && <span className="text-red-500">*</span>}
+            </label>
+            <WidgetFactory
+              field={field}
+              value={formData[field.id]}
+              onChange={(v) => updateField(field.id, v)}
+              path={field.id}
+              errors={errors}
+              widgetsOverride={widgetsOverride}
+            />
+            {field.description && <p className="text-xs text-gray-400">{field.description}</p>}
+            {errors[field.id] && (
+              <div className="flex items-center gap-1 text-xs text-red-500 animate-pulse font-medium">
+                <AlertCircle size={12} /> {errors[field.id]}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="bottom-0 left-0 right-0 p-6 border-t bg-gray-50 flex gap-3 z-10">
+        <button
+          type="button"
+          onClick={() => setShowPreview(true)}
+          className="flex-1 py-3 text-lg bg-white text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+        >
+          <Eye size={20} /> 数据预览
+        </button>
+        <button
+          onClick={handleSubmit}
+          className="flex-1 py-3 text-lg bg-indigo-600 text-white rounded-lg shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-colors"
+        >
+          确认提交
+        </button>
+      </div>
+
+      {showPreview && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg flex flex-col max-h-[80vh] animate-in fade-in zoom-in duration-200">
+            <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
+              <div className="flex items-center gap-4">
+                <h3 className="text-lg font-bold text-gray-800">填写内容确认</h3>
+                <div className="flex bg-gray-100 rounded p-0.5">
+                  <button
+                    onClick={() => setPreviewTab("visual")}
+                    className={`text-xs px-3 py-1 rounded transition-all ${previewTab === "visual" ? "bg-white shadow text-indigo-600 font-medium" : "text-gray-500 hover:text-gray-700"}`}
+                  >
+                    可视化
+                  </button>
+                  <button
+                    onClick={() => setPreviewTab("json")}
+                    className={`text-xs px-3 py-1 rounded transition-all ${previewTab === "json" ? "bg-white shadow text-indigo-600 font-medium" : "text-gray-500 hover:text-gray-700"}`}
+                  >
+                    JSON源
+                  </button>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowPreview(false)}
+                className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-all"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto bg-gray-50">
+              {previewTab === "json" ? (
+                <pre className="text-xs text-[#9cdcfe] font-mono p-6 leading-relaxed bg-[#1e1e1e] h-full">
+                  {JSON.stringify(formData, null, 2)}
+                </pre>
+              ) : (
+                <div className="p-6 space-y-4">
+                  {fields.map((field) => (
+                    <div key={field.id} className="bg-white p-3 rounded border border-gray-200 shadow-sm">
+                      <div className="text-xs text-gray-400 mb-1">{field.title}</div>
+                      <div className="text-sm text-gray-800 font-medium break-all">
+                        {field.type === "array" ? (
+                          <div className="space-y-2 mt-2">
+                            {(formData[field.id] || []).map((item: any, i: number) => (
+                              <div key={i} className="bg-gray-50 p-2 rounded border border-gray-100 text-xs">
+                                <div className="font-bold text-gray-400 mb-1">Item {i + 1}</div>
+                                {field.subFields?.map((sub: Field) => (
+                                  <div key={sub.id} className="flex gap-2">
+                                    <span className="text-gray-500">{sub.title}:</span>
+                                    <span>{String(item[sub.id])}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            ))}
+                            {(formData[field.id] || []).length === 0 && (
+                              <span className="text-gray-400 italic">无数据</span>
+                            )}
+                          </div>
+                        ) : (
+                          String(
+                            formData[field.id] === undefined || formData[field.id] === "" ? "-" : formData[field.id]
+                          )
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="p-4 border-t border-gray-100 bg-white rounded-b-xl flex justify-end gap-3">
+              <button
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                onClick={() => setShowPreview(false)}
+              >
+                返回修改
+              </button>
+              <button
+                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
+                onClick={() => {
+                  setShowPreview(false);
+                  handleSubmit();
+                }}
+              >
+                确认提交
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

@@ -1,3 +1,10 @@
+/**
+ * Public exports for the shared form UI component library.
+ *
+ * This barrel file exposes primitive inputs (text, textarea, checkbox, etc.)
+ * and higher-level building blocks that can be reused across builders and
+ * runners.
+ */
 export * from "./components/AvatarUpload";
 export * from "./components/base";
 export * from "./components/Checkbox";

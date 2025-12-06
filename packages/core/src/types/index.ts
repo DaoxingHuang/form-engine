@@ -18,6 +18,8 @@ export interface Field {
   };
   accept?: string;
   maxFileSize?: number;
+  maxFiles?: number;
+  multiple?: boolean;
   subFields?: Field[];
   customClass?: string;
   disabled?: boolean;

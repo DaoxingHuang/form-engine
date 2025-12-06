@@ -14,7 +14,6 @@
     "lucide-react": "^0.263.1"
   },
   "devDependencies": {
-    "@origami/ts-config": "workspace:*",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0",
     "clsx": "^2.0.0",
