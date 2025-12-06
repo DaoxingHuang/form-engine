@@ -11,16 +11,17 @@
     "clean": "rm -rf node_modules **/*/node_modules"
   },
   "keywords": [
-    "3D",
-    "WebGL",
-    "Three.js",
-    "Galacean",
-    "Rendering",
-    "Interaction",
-    "Framework",
-    "Modular",
-    "Pipeline",
-    "Extensions"
+    "form-builder",
+    "form-runner",
+    "low-code",
+    "react",
+    "schema-driven",
+    "json-schema",
+    "drag-and-drop",
+    "visual-editor",
+    "form-engine",
+    "monorepo",
+    "form"
   ],
   "author": "Daoxing.Huang <",
   "license": "MIT",

@@ -20,6 +20,186 @@ const SUB_FIELD_TYPES = [
   { type: "upload", label: "上传" }
 ];
 
+const FieldPropertiesEditor: React.FC<{
+  field: any;
+  onUpdate: (changes: any) => void;
+  children?: React.ReactNode;
+}> = ({ field, onUpdate, children }) => {
+  return (
+    <div className="flex-1 overflow-y-auto p-4 space-y-6">
+      {/* Basic Info */}
+      <div className="space-y-3">
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-gray-500">标题</label>
+          <input
+            className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+            value={field.title}
+            onChange={(e) => onUpdate({ title: e.target.value })}
+          />
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-gray-500">字段标识 (ID)</label>
+          <div className="flex gap-1">
+            <input
+              className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all font-mono"
+              value={field.id}
+              onChange={(e) => onUpdate({ id: e.target.value })}
+            />
+            <button
+              className="px-2 border border-gray-200 rounded hover:bg-gray-50 text-gray-500"
+              title="复制ID"
+              onClick={() => navigator.clipboard.writeText(field.id)}
+            >
+              #
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-gray-500">描述/提示</label>
+          <textarea
+            className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+            rows={2}
+            value={field.description || ""}
+            onChange={(e) => onUpdate({ description: e.target.value })}
+          />
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-gray-500">占位符</label>
+          <input
+            className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+            value={field.placeholder || ""}
+            onChange={(e) => onUpdate({ placeholder: e.target.value })}
+          />
+        </div>
+      </div>
+
+      {/* Validation */}
+      <div className="space-y-3 pt-4 border-t border-gray-100">
+        <h4 className="text-xs font-bold text-gray-900">校验规则</h4>
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id={`required-${field.id}`}
+            checked={field.required}
+            onChange={(e) => onUpdate({ required: e.target.checked })}
+            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+          />
+          <label htmlFor={`required-${field.id}`} className="text-sm text-gray-700">
+            必填项
+          </label>
+        </div>
+
+        {["text", "textarea"].includes(field.type) && (
+          <>
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-gray-500">正则校验</label>
+              <select
+                className="w-full text-xs border border-gray-300 rounded px-2 py-1.5 mb-2"
+                onChange={(e) => {
+                  const preset = REGEX_PRESETS.find((p) => p.value === e.target.value);
+                  if (preset) {
+                    onUpdate({
+                      validation: { pattern: preset.value, message: preset.msg }
+                    });
+                  }
+                }}
+              >
+                {REGEX_PRESETS.map((p) => (
+                  <option key={p.label} value={p.value}>
+                    {p.label}
+                  </option>
+                ))}
+              </select>
+              <input
+                className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 font-mono text-xs"
+                placeholder="正则表达式"
+                value={field.validation?.pattern || ""}
+                onChange={(e) =>
+                  onUpdate({
+                    validation: { ...field.validation, pattern: e.target.value }
+                  })
+                }
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-gray-500">错误提示</label>
+              <input
+                className="w-full text-sm border border-gray-300 rounded-md px-3 py-2"
+                placeholder="校验失败时的提示信息"
+                value={field.validation?.message || ""}
+                onChange={(e) =>
+                  onUpdate({
+                    validation: { ...field.validation, message: e.target.value }
+                  })
+                }
+              />
+            </div>
+          </>
+        )}
+
+        {field.type === "number" && (
+          <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-gray-500">最小值</label>
+              <input
+                type="number"
+                className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+                value={field.minimum ?? ""}
+                onChange={(e) => onUpdate({ minimum: e.target.value === "" ? undefined : Number(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-gray-500">最大值</label>
+              <input
+                type="number"
+                className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+                value={field.maximum ?? ""}
+                onChange={(e) => onUpdate({ maximum: e.target.value === "" ? undefined : Number(e.target.value) })}
+              />
+            </div>
+          </div>
+        )}
+
+        {field.type === "upload" && (
+          <>
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-gray-500">文件类型 (Accept)</label>
+              <input
+                className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+                placeholder="e.g. .jpg,.png,image/*"
+                value={field.accept || ""}
+                onChange={(e) => onUpdate({ accept: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-gray-500">最大大小 (MB)</label>
+              <input
+                type="number"
+                className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+                value={field.maxFileSize ?? ""}
+                onChange={(e) => onUpdate({ maxFileSize: e.target.value === "" ? undefined : Number(e.target.value) })}
+              />
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Options for Select/Radio/Checkbox */}
+      {["select", "radio", "checkbox"].includes(field.type) && (
+        <div className="space-y-2 pt-4 border-t border-gray-100">
+          <h4 className="text-xs font-bold text-gray-900">选项配置</h4>
+          <OptionsEditor options={field.options} onChange={(opts) => onUpdate({ options: opts })} />
+        </div>
+      )}
+
+      {children}
+    </div>
+  );
+};
+
 const PropertiesPanel: React.FC = () => {
   const {
     fields,
@@ -68,48 +248,10 @@ const PropertiesPanel: React.FC = () => {
             <p className="text-[10px] text-indigo-400">{editingSubField.id}</p>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
-          <div className="space-y-3">
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-gray-500">标题</label>
-              <input
-                className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-                value={editingSubField.title}
-                onChange={(e) => updateSubField(selectedField.id, editingSubField.id, { title: e.target.value })}
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-gray-500">字段标识 (ID)</label>
-              <input
-                className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 bg-gray-50 text-gray-500 font-mono"
-                value={editingSubField.id}
-                disabled
-              />
-            </div>
-            <div className="flex items-center gap-2 pt-2">
-              <input
-                type="checkbox"
-                id="sf-required"
-                checked={editingSubField.required}
-                onChange={(e) => updateSubField(selectedField.id, editingSubField.id, { required: e.target.checked })}
-                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-              />
-              <label htmlFor="sf-required" className="text-sm text-gray-700">
-                必填项
-              </label>
-            </div>
-          </div>
-
-          {["select", "radio", "checkbox"].includes(editingSubField.type) && (
-            <div className="space-y-2 pt-2 border-t border-gray-100">
-              <label className="text-xs font-medium text-gray-500">选项配置</label>
-              <OptionsEditor
-                options={editingSubField.options}
-                onChange={(opts) => updateSubField(selectedField.id, editingSubField.id, { options: opts })}
-              />
-            </div>
-          )}
-        </div>
+        <FieldPropertiesEditor
+          field={editingSubField}
+          onUpdate={(changes) => updateSubField(selectedField.id, editingSubField.id, changes)}
+        />
       </div>
     );
   }
@@ -122,132 +264,7 @@ const PropertiesPanel: React.FC = () => {
         <p className="text-[10px] text-gray-400 mt-0.5">{selectedField.type}</p>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
-        {/* Basic Info */}
-        <div className="space-y-3">
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-500">标题</label>
-            <input
-              className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-              value={selectedField.title}
-              onChange={(e) => updateField(selectedField.id, { title: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-500">字段标识 (ID)</label>
-            <div className="flex gap-1">
-              <input
-                className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 bg-gray-50 text-gray-500 font-mono"
-                value={selectedField.id}
-                disabled
-              />
-              <button
-                className="px-2 border border-gray-200 rounded hover:bg-gray-50 text-gray-500"
-                title="复制ID"
-                onClick={() => navigator.clipboard.writeText(selectedField.id)}
-              >
-                #
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-500">描述/提示</label>
-            <textarea
-              className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-              rows={2}
-              value={selectedField.description || ""}
-              onChange={(e) => updateField(selectedField.id, { description: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-500">占位符</label>
-            <input
-              className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
-              value={selectedField.placeholder || ""}
-              onChange={(e) => updateField(selectedField.id, { placeholder: e.target.value })}
-            />
-          </div>
-        </div>
-
-        {/* Validation */}
-        <div className="space-y-3 pt-4 border-t border-gray-100">
-          <h4 className="text-xs font-bold text-gray-900">校验规则</h4>
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="required"
-              checked={selectedField.required}
-              onChange={(e) => updateField(selectedField.id, { required: e.target.checked })}
-              className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-            />
-            <label htmlFor="required" className="text-sm text-gray-700">
-              必填项
-            </label>
-          </div>
-
-          {["text", "textarea"].includes(selectedField.type) && (
-            <>
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-500">正则校验</label>
-                <select
-                  className="w-full text-xs border border-gray-300 rounded px-2 py-1.5 mb-2"
-                  onChange={(e) => {
-                    const preset = REGEX_PRESETS.find((p) => p.value === e.target.value);
-                    if (preset) {
-                      updateField(selectedField.id, {
-                        validation: { pattern: preset.value, message: preset.msg }
-                      });
-                    }
-                  }}
-                >
-                  {REGEX_PRESETS.map((p) => (
-                    <option key={p.label} value={p.value}>
-                      {p.label}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  className="w-full text-sm border border-gray-300 rounded-md px-3 py-2 font-mono text-xs"
-                  placeholder="正则表达式"
-                  value={selectedField.validation?.pattern || ""}
-                  onChange={(e) =>
-                    updateField(selectedField.id, {
-                      validation: { ...selectedField.validation, pattern: e.target.value }
-                    })
-                  }
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-500">错误提示</label>
-                <input
-                  className="w-full text-sm border border-gray-300 rounded-md px-3 py-2"
-                  placeholder="校验失败时的提示信息"
-                  value={selectedField.validation?.message || ""}
-                  onChange={(e) =>
-                    updateField(selectedField.id, {
-                      validation: { ...selectedField.validation, message: e.target.value }
-                    })
-                  }
-                />
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Options for Select/Radio/Checkbox */}
-        {["select", "radio", "checkbox"].includes(selectedField.type) && (
-          <div className="space-y-2 pt-4 border-t border-gray-100">
-            <h4 className="text-xs font-bold text-gray-900">选项配置</h4>
-            <OptionsEditor
-              options={selectedField.options}
-              onChange={(opts) => updateField(selectedField.id, { options: opts })}
-            />
-          </div>
-        )}
-
+      <FieldPropertiesEditor field={selectedField} onUpdate={(changes) => updateField(selectedField.id, changes)}>
         {/* Array Sub-fields */}
         {selectedField.type === "array" && (
           <div className="space-y-3 pt-4 border-t border-gray-100">
@@ -307,7 +324,7 @@ const PropertiesPanel: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
+      </FieldPropertiesEditor>
     </div>
   );
 };

@@ -104,9 +104,9 @@ const Canvas: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 bg-gray-100/80 p-8 overflow-y-auto flex justify-center" onClick={() => handleSelect("")}>
-      <div className="w-full max-w-2xl bg-white min-h-[800px] shadow-sm rounded-lg flex flex-col">
-        <div className="h-12 border-b border-gray-100 flex items-center px-6 bg-gray-50/30 rounded-t-lg">
+    <div className="flex-1 bg-gray-100/80 p-8 flex justify-center overflow-hidden" onClick={() => handleSelect("")}>
+      <div className="w-full max-w-2xl bg-white shadow-sm rounded-lg flex flex-col h-full">
+        <div className="h-12 border-b border-gray-100 flex items-center px-6 bg-gray-50/30 rounded-t-lg shrink-0">
           <div className="flex gap-1.5">
             <div className="w-2.5 h-2.5 rounded-full bg-red-400/80"></div>
             <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/80"></div>
@@ -115,7 +115,7 @@ const Canvas: React.FC = () => {
           <div className="ml-4 text-xs text-gray-400 font-medium">New Form</div>
         </div>
 
-        <div className="flex-1 p-8 space-y-4">
+        <div className="flex-1 p-8 space-y-4 overflow-y-auto">
           {fields.length === 0 && (
             <div className="h-64 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center text-gray-400 gap-3">
               <Plus size={32} className="text-gray-300" />

@@ -7,9 +7,10 @@ interface FormRunnerProps {
   fields: Field[];
   initialValues?: Record<string, any>;
   onSubmit?: (data: any) => void;
+  className?: string;
 }
 
-export const FormRunner: React.FC<FormRunnerProps> = ({ fields, initialValues, onSubmit }) => {
+export const FormRunner: React.FC<FormRunnerProps> = ({ fields, initialValues, onSubmit, className }) => {
   const { formData, errors, setFormData, updateField, validate } = useRunnerStore();
   const [showPreview, setShowPreview] = useState(false);
   const [previewTab, setPreviewTab] = useState<"visual" | "json">("visual");
@@ -40,28 +41,30 @@ export const FormRunner: React.FC<FormRunnerProps> = ({ fields, initialValues, o
   };
 
   return (
-    <div className="p-8 space-y-6">
-      {fields.map((field) => (
-        <div key={field.id} className="space-y-1.5">
-          <label className="block text-sm font-semibold text-gray-700">
-            {field.title} {field.required && <span className="text-red-500">*</span>}
-          </label>
-          <WidgetFactory
-            field={field}
-            value={formData[field.id]}
-            onChange={(v) => updateField(field.id, v)}
-            path={field.id}
-            errors={errors}
-          />
-          {field.description && <p className="text-xs text-gray-400">{field.description}</p>}
-          {errors[field.id] && (
-            <div className="flex items-center gap-1 text-xs text-red-500 animate-pulse font-medium">
-              <AlertCircle size={12} /> {errors[field.id]}
-            </div>
-          )}
-        </div>
-      ))}
-      <div className="pt-6 flex gap-3">
+    <div className={`relative h-full ${className || ""}`}>
+      <div className="h-full overflow-y-auto p-8 pb-32 space-y-6">
+        {fields.map((field) => (
+          <div key={field.id} className="space-y-1.5">
+            <label className="block text-sm font-semibold text-gray-700">
+              {field.title} {field.required && <span className="text-red-500">*</span>}
+            </label>
+            <WidgetFactory
+              field={field}
+              value={formData[field.id]}
+              onChange={(v) => updateField(field.id, v)}
+              path={field.id}
+              errors={errors}
+            />
+            {field.description && <p className="text-xs text-gray-400">{field.description}</p>}
+            {errors[field.id] && (
+              <div className="flex items-center gap-1 text-xs text-red-500 animate-pulse font-medium">
+                <AlertCircle size={12} /> {errors[field.id]}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="bottom-0 left-0 right-0 p-6 border-t bg-gray-50 flex gap-3 z-10">
         <button
           type="button"
           onClick={() => setShowPreview(true)}

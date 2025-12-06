@@ -1,6 +1,6 @@
-import { generateSchema, parseSchemaToFields, useBuilderStore } from "@origami/core";
+import { generateSchema, parseSchemaToFields, useBuilderStore, validateFormStructure } from "@origami/core";
 import { FormRunner } from "@origami/form-runner";
-import { ClipboardList, Code, FileJson, Import, Play, Save } from "lucide-react";
+import { AlertCircle, ClipboardList, Code, FileJson, Import, Play, Save, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Canvas from "./components/Canvas";
 import PropertiesPanel from "./components/PropertiesPanel";
@@ -17,6 +17,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ onPublish, initialSchema }) =
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [jsonInput, setJsonInput] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   useEffect(() => {
     if (initialSchema) {
@@ -28,7 +29,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ onPublish, initialSchema }) =
     if (showJson) {
       setJsonInput(JSON.stringify(generateSchema(fields), null, 2));
     }
-  }, [showJson, fields]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showJson]);
 
   const handleRestoreFromJson = () => {
     try {
@@ -47,35 +49,63 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ onPublish, initialSchema }) =
   };
 
   const handlePublish = () => {
+    const errors = validateFormStructure(fields);
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+    setValidationErrors([]);
+
     setIsSaving(true);
     const schema = generateSchema(fields);
     onPublish?.(schema);
     setTimeout(() => setIsSaving(false), 1000);
   };
 
-  if (isPreviewMode) {
-    return (
-      <div className="flex flex-col h-full bg-gray-50">
-        <div className="bg-indigo-900 text-white px-4 py-3 flex justify-between items-center shadow-md z-10">
-          <span className="font-bold flex items-center gap-2">
-            <Play size={18} /> 模拟预览中
-          </span>
-          <button
-            onClick={() => setIsPreviewMode(false)}
-            className="bg-white/20 hover:bg-white/30 text-xs px-3 py-1.5 rounded"
-          >
-            退出预览
-          </button>
-        </div>
-        <div className="flex-1 overflow-hidden">
-          <FormRunner fields={fields} onSubmit={(data) => alert(JSON.stringify(data, null, 2))} />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex h-full relative">
+      {isPreviewMode && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
+            <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
+              <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                <Play size={20} className="text-indigo-600" /> 表单预览
+              </h3>
+              <button
+                onClick={() => setIsPreviewMode(false)}
+                className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-all"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-hidden bg-gray-50/50 p-6 flex flex-col min-h-0">
+              {fields.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-gray-400 space-y-4 min-h-[300px]">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Play size={32} className="text-gray-300 ml-1" />
+                  </div>
+                  <p className="text-sm">表单为空，请先添加组件</p>
+                  <button
+                    onClick={() => setIsPreviewMode(false)}
+                    className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+                  >
+                    返回编辑
+                  </button>
+                </div>
+              ) : (
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 max-w-2xl mx-auto w-full flex-1 flex flex-col overflow-hidden min-h-0">
+                  <FormRunner
+                    fields={fields}
+                    onSubmit={(data) => alert(JSON.stringify(data, null, 2))}
+                    className="h-full"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <Sidebar />
 
       <div className="flex-1 flex flex-col min-w-0 bg-gray-100/80">
@@ -91,7 +121,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ onPublish, initialSchema }) =
               onClick={() => setIsPreviewMode(true)}
               className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-all border bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100 font-medium"
             >
-              <Play size={14} fill="currentColor" /> 试运行
+              <Play size={14} fill="currentColor" /> 预览
             </button>
           </div>
           <button
@@ -109,7 +139,29 @@ const FormBuilder: React.FC<FormBuilderProps> = ({ onPublish, initialSchema }) =
           </button>
         </div>
 
-        <div className="flex-1 overflow-hidden relative">
+        {validationErrors.length > 0 && (
+          <div className="bg-red-50 border-b border-red-200 px-4 py-3 animate-in slide-in-from-top-2">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="text-red-500 mt-0.5 shrink-0" size={16} />
+              <div className="text-sm text-red-700 flex-1">
+                <p className="font-medium mb-1">提交失败，请检查以下错误：</p>
+                <ul className="list-disc list-inside space-y-0.5 text-xs opacity-90">
+                  {validationErrors.map((err, i) => (
+                    <li key={i}>{err}</li>
+                  ))}
+                </ul>
+              </div>
+              <button
+                onClick={() => setValidationErrors([])}
+                className="text-red-400 hover:text-red-600 p-1 rounded hover:bg-red-100 transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="flex-1 overflow-hidden relative flex flex-col">
           <Canvas />
 
           {showJson && (
