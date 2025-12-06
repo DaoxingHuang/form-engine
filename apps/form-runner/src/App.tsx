@@ -1,7 +1,7 @@
 import { Field } from "@origami/core";
-import { FormRunner } from "@origami/widgets";
 import { CheckCircle } from "lucide-react";
 import { useState } from "react";
+import { FormRunner } from "./FormRunner";
 
 // Sample schema for demonstration
 const SAMPLE_FIELDS: Field[] = [

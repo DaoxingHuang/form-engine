@@ -1,4 +1,3 @@
-export * from "./FormRunner";
 export * from "./WidgetFactory";
 export * from "./widgets/advanced/DateWidget";
 export * from "./widgets/advanced/RateWidget";

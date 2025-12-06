@@ -13,6 +13,7 @@
     "react-dom": "^18.2.0",
     "@origami/form-builder": "workspace:*",
     "@origami/widgets": "workspace:*",
+    "@origami/form-runner": "workspace:*",
     "tailwindcss": "^3.4.18",
     "three": "^0.158.0",
     "zustand": "^4.0.0"
