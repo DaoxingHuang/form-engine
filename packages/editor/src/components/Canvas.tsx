@@ -1,4 +1,5 @@
-import { Field, useBuilderStore } from "@origami/core";
+import type { Field } from "@origami/core";
+import { useBuilderStore } from "@origami/core";
 import { Plus, Star, Trash2, Upload } from "lucide-react";
 import React from "react";
 

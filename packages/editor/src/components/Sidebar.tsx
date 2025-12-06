@@ -1,4 +1,5 @@
-import { Field, useBuilderStore } from "@origami/core";
+import type { Field } from "@origami/core";
+import { useBuilderStore } from "@origami/core";
 import { Calendar, CheckSquare, CircleDot, Hash, List, Sliders, Star, ToggleLeft, Type, Upload } from "lucide-react";
 import React from "react";
 

@@ -1,4 +1,4 @@
-import { Field } from "@origami/core";
+import type { Field } from "@origami/core";
 import { Checkbox } from "@origami/form-ui";
 import React from "react";
 

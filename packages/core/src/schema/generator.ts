@@ -1,4 +1,4 @@
-import { Field, Schema } from "../types";
+import type { Field, Schema } from "../types";
 
 /**
  * Generate a JSON Schema object from builder fields.

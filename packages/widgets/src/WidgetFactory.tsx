@@ -1,4 +1,4 @@
-import { Field } from "@origami/core";
+import type { Field } from "@origami/core";
 import React from "react";
 import DateWidget from "./widgets/advanced/DateWidget";
 import RateWidget from "./widgets/advanced/RateWidget";
@@ -18,7 +18,7 @@ import ArrayWidget from "./widgets/layout/ArrayWidget";
  */
 const PlaceholderWidget = ({ field }: { field: Field }) => (
   <div className="p-2 border border-gray-200 rounded text-gray-400 text-sm">
-    Widget type "{field.type}" not implemented yet.
+    Widget type &quot;{field.type}&quot; not implemented yet.
   </div>
 );
 

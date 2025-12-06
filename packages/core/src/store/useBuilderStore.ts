@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Field } from "../types";
+import type { Field } from "../types";
 
 /**
  * Builder store state shape.

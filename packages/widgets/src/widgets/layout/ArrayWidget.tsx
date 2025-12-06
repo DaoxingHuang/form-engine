@@ -1,4 +1,4 @@
-import { Field } from "@origami/core";
+import type { Field } from "@origami/core";
 import { AlertCircle, Plus, X } from "lucide-react";
 import React from "react";
 import { WidgetFactory } from "../../WidgetFactory";

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Field } from "../types";
+import type { Field } from "../types";
 
 /**
  * Runner store state shape.
@@ -64,7 +64,9 @@ export const useRunnerStore = create<RunnerState>((set, get) => ({
             newErrors[path] = field.errorMsg || "格式不正确";
             isValid = false;
           }
-        } catch (e) {}
+        } catch {
+          // Ignore invalid regular expression configuration for this field.
+        }
       }
       if (value && field.validation?.pattern && !newErrors[path]) {
         try {
@@ -72,7 +74,9 @@ export const useRunnerStore = create<RunnerState>((set, get) => ({
             newErrors[path] = field.validation.message || "格式不正确";
             isValid = false;
           }
-        } catch (e) {}
+        } catch {
+          // Ignore invalid custom validation pattern configuration.
+        }
       }
       if (field.type === "array" && Array.isArray(value)) {
         value.forEach((item, index) => {

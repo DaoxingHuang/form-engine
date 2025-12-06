@@ -1,4 +1,4 @@
-import { Field } from "../types";
+import type { Field } from "../types";
 
 const ID_REGEX = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 
@@ -73,7 +73,7 @@ export const validateFormStructure = (fields: Field[]): string[] => {
 
   const processedIds = new Set<string>();
 
-  fields.forEach((field, index) => {
+  fields.forEach((field) => {
     if (errorMap[field.id] && !processedIds.has(field.id)) {
       errors.push(`组件 "${field.title}" (${field.id}): ${errorMap[field.id]}`);
       processedIds.add(field.id);
