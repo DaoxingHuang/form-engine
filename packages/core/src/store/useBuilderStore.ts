@@ -28,7 +28,7 @@ export const useBuilderStore = create<BuilderState>((set) => ({
   updateField: (id, updates) =>
     set((state) => ({
       fields: state.fields.map((f) => (f.id === id ? { ...f, ...updates } : f)),
-      selectedFieldId: updates.id && state.selectedFieldId === id ? updates.id : state.selectedFieldId
+      selectedFieldId: updates.id !== undefined && state.selectedFieldId === id ? updates.id : state.selectedFieldId
     })),
   removeField: (id) =>
     set((state) => ({
@@ -51,7 +51,7 @@ export const useBuilderStore = create<BuilderState>((set) => ({
         }
         return f;
       }),
-      editingSubFieldId: updates.id && state.editingSubFieldId === subId ? updates.id : state.editingSubFieldId
+      editingSubFieldId: updates.id !== undefined && state.editingSubFieldId === subId ? updates.id : state.editingSubFieldId
     })),
   removeSubField: (parentId, subId) =>
     set((state) => ({

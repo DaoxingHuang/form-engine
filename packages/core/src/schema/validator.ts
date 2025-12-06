@@ -1,21 +1,72 @@
 import { Field } from "../types";
 
-export const validateFormStructure = (fields: Field[]): string[] => {
-  const errors: string[] = [];
-  const topLevelIds = new Set<string>();
-  fields.forEach((field, index) => {
-    if (!field.id || !field.id.trim()) errors.push(`第 ${index + 1} 个组件 Key 不能为空`);
-    else if (topLevelIds.has(field.id)) errors.push(`重复 Key: "${field.id}"`);
-    else topLevelIds.add(field.id);
+const ID_REGEX = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 
-    if (field.type === "array" && field.subFields) {
-      const subIds = new Set<string>();
-      field.subFields.forEach((sub, subIdx) => {
-        if (!sub.id || !sub.id.trim()) errors.push(`"${field.title}" 的子项 Key 不能为空`);
-        else if (subIds.has(sub.id)) errors.push(`"${field.title}" 内部重复 Key: "${sub.id}"`);
-        else subIds.add(sub.id);
+export const validateFieldId = (id: string): string | null => {
+  if (!id) return "ID 不能为空";
+  if (!ID_REGEX.test(id)) return "ID 格式不正确 (仅限字母、数字、下划线，且不能以数字开头)";
+  return null;
+};
+
+export const getValidationErrors = (fields: Field[]): Record<string, string> => {
+  const errors: Record<string, string> = {};
+  const idCounts: Record<string, number> = {};
+
+  // Count IDs
+  fields.forEach((f) => {
+    idCounts[f.id] = (idCounts[f.id] || 0) + 1;
+    if (f.type === "array" && f.subFields) {
+      const subIdCounts: Record<string, number> = {};
+      f.subFields.forEach((sf) => {
+        subIdCounts[sf.id] = (subIdCounts[sf.id] || 0) + 1;
+      });
+      f.subFields.forEach((sf) => {
+        const errorKey = `${f.id}.${sf.id}`;
+        const formatError = validateFieldId(sf.id);
+        if (formatError) {
+          errors[errorKey] = formatError;
+        } else if (subIdCounts[sf.id] > 1) {
+          errors[errorKey] = "ID 重复";
+        }
       });
     }
   });
+
+  // Check main fields
+  fields.forEach((f) => {
+    const formatError = validateFieldId(f.id);
+    if (formatError) {
+      errors[f.id] = formatError;
+    } else if (idCounts[f.id] > 1) {
+      errors[f.id] = "ID 重复";
+    }
+  });
+
+  return errors;
+};
+
+export const validateFormStructure = (fields: Field[]): string[] => {
+  const errors: string[] = [];
+  const errorMap = getValidationErrors(fields);
+
+  const processedIds = new Set<string>();
+
+  fields.forEach((field, index) => {
+    if (errorMap[field.id] && !processedIds.has(field.id)) {
+      errors.push(`组件 "${field.title}" (${field.id}): ${errorMap[field.id]}`);
+      processedIds.add(field.id);
+    }
+
+    if (field.type === "array" && field.subFields) {
+      field.subFields.forEach((sub) => {
+        const errorKey = `${field.id}.${sub.id}`;
+        if (errorMap[errorKey] && !processedIds.has(errorKey)) {
+          errors.push(`组件 "${field.title}" 的子项 "${sub.title}" (${sub.id}): ${errorMap[errorKey]}`);
+          processedIds.add(errorKey);
+        }
+      });
+    }
+  });
+
   return errors;
 };
