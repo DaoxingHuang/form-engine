@@ -16,6 +16,7 @@
     "@origami/core": "workspace:*",
     "@origami/form-ui": "workspace:*",
     "@origami/widgets": "workspace:*",
+    "@origami/form-runner": "workspace:*",
     "lucide-react": "^0.292.0",
     "clsx": "^2.0.0",
     "tailwind-merge": "^1.14.0"

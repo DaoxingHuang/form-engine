@@ -1,7 +1,7 @@
 import { Field, useRunnerStore } from "@origami/core";
+import { WidgetFactory } from "@origami/widgets";
 import { AlertCircle, Eye, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { WidgetFactory } from "./WidgetFactory";
 
 interface FormRunnerProps {
   fields: Field[];

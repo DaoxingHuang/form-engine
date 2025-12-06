@@ -1,5 +1,5 @@
 import { generateSchema, parseSchemaToFields, useBuilderStore } from "@origami/core";
-import { FormRunner } from "@origami/widgets";
+import { FormRunner } from "@origami/form-runner";
 import { ClipboardList, Code, FileJson, Import, Play, Save } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Canvas from "./components/Canvas";
