@@ -13,8 +13,8 @@
     }
   },
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --external react",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch --external react"
+    "build": "tsup src/index.ts --format cjs,esm --dts --external react --tsconfig tsconfig.json",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch --external react --tsconfig tsconfig.json"
   },
   "peerDependencies": {
     "react": "^18.2.0",
@@ -32,7 +32,6 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "typescript": "^5.0.2",
-    "@origami/ts-config": "workspace:*",
     "tsup": "^8.0.0"
   }
 }

@@ -1,5 +1,6 @@
 import type { Field } from "@origami/core";
 import React from "react";
+import type { RunnerWidgetMap, RunnerWidgetProps } from "./types";
 import DateWidget from "./widgets/advanced/DateWidget";
 import RateWidget from "./widgets/advanced/RateWidget";
 import SliderWidget from "./widgets/advanced/SliderWidget";
@@ -25,7 +26,7 @@ const PlaceholderWidget = ({ field }: { field: Field }) => (
 /**
  * Mapping from logical field `type` to concrete React widget components.
  */
-const WIDGET_MAP: Record<string, React.FC<any>> = {
+const WIDGET_MAP: RunnerWidgetMap = {
   text: TextWidget,
   number: TextWidget, // Reuse TextWidget for number
   textarea: TextAreaWidget,
@@ -43,12 +44,16 @@ const WIDGET_MAP: Record<string, React.FC<any>> = {
 /**
  * Props for the {@link WidgetFactory} component.
  */
-interface WidgetFactoryProps {
+interface WidgetFactoryProps extends RunnerWidgetProps {
   field: Field;
-  value: any;
-  onChange: (value: any) => void;
   path: string;
   errors: Record<string, string>;
+  /**
+   * Optional map of custom widgets that override the default mapping.
+   * Keys are field types, values are React components that accept the
+   * standard widget props (field, value, onChange, error, path, errors).
+   */
+  widgetsOverride?: RunnerWidgetMap;
 }
 /**
  * Render an appropriate form widget for a given field definition.
@@ -57,8 +62,16 @@ interface WidgetFactoryProps {
  * through value, change handler, validation errors and path information. When
  * no widget is registered for a type, a placeholder widget is rendered.
  */
-export const WidgetFactory: React.FC<WidgetFactoryProps> = ({ field, value, onChange, path, errors }) => {
-  const Component = WIDGET_MAP[field.type] || PlaceholderWidget;
+export const WidgetFactory: React.FC<WidgetFactoryProps> = ({
+  field,
+  value,
+  onChange,
+  path,
+  errors,
+  widgetsOverride
+}) => {
+  const overrideMap = widgetsOverride || {};
+  const Component = overrideMap[field.type] || WIDGET_MAP[field.type] || PlaceholderWidget;
   const error = errors[path];
 
   return (

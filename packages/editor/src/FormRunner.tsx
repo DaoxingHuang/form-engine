@@ -1,6 +1,6 @@
 import type { Field } from "@origami/core";
 import { useRunnerStore } from "@origami/core";
-import { WidgetFactory } from "@origami/widgets";
+import { WidgetFactory, type RunnerWidgetMap } from "@origami/widgets";
 import { AlertCircle, Eye, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
@@ -37,6 +37,14 @@ interface FormRunnerProps {
    * 根容器的额外样式类名，便于在宿主应用中自定义布局。
    */
   className?: string;
+  /**
+   * Optional custom widget map to override default field-type widgets.
+   *
+   * This allows host applications to provide their own React components
+   * for specific field types (e.g. a custom upload widget) while keeping
+   * the runner's data flow unchanged.
+   */
+  widgetsOverride?: RunnerWidgetMap;
 }
 
 /**
@@ -47,7 +55,13 @@ interface FormRunnerProps {
  * - 通过 `useRunnerStore` 管理状态和校验；
  * - 内置数据预览弹窗，支持 JSON / 可视化两种视图。
  */
-export const FormRunner: React.FC<FormRunnerProps> = ({ fields, initialValues, onSubmit, className }) => {
+export const FormRunner: React.FC<FormRunnerProps> = ({
+  fields,
+  initialValues,
+  onSubmit,
+  className,
+  widgetsOverride
+}) => {
   const { formData, errors, setFormData, updateField, validate } = useRunnerStore();
   const [showPreview, setShowPreview] = useState(false);
   const [previewTab, setPreviewTab] = useState<"visual" | "json">("visual");
@@ -91,6 +105,7 @@ export const FormRunner: React.FC<FormRunnerProps> = ({ fields, initialValues, o
               onChange={(v) => updateField(field.id, v)}
               path={field.id}
               errors={errors}
+              widgetsOverride={widgetsOverride}
             />
             {field.description && <p className="text-xs text-gray-400">{field.description}</p>}
             {errors[field.id] && (

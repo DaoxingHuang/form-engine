@@ -29,6 +29,7 @@ module.exports = {
     "@typescript-eslint/consistent-type-imports": "warn",
     // Disable prop-types for TSX files
     "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off",
     // Enforce maximum line length to match Prettier's printWidth and keep diffs readable
     "max-len": [
       "error",
@@ -47,12 +48,25 @@ module.exports = {
     node: true,
     es6: true
   },
-  ignorePatterns: ["**/dist/**"],
+  ignorePatterns: [
+    "**/dist/**",
+    "**/*.d.ts",
+    "vitest.workspace.ts",
+    "types/**",
+    "**/vite.config.ts",
+    "**/vitest.*.config.ts"
+  ],
   overrides: [
     {
       files: ["**/*.ts", "**/*.tsx"],
       parserOptions: {
-        project: ["./tsconfig.json", "./packages/*/tsconfig.json"],
+        project: [
+          "./tsconfig.json",
+          "./packages/*/tsconfig.json",
+          "./apps/*/tsconfig.json",
+          "./apps/*/tsconfig.app.json",
+          "./apps/*/tsconfig.node.json"
+        ],
         tsconfigRootDir: __dirname
       }
     },

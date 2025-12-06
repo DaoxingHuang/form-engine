@@ -1,15 +1,8 @@
-import type { Field } from "@origami/core";
 import { Rate } from "@origami/form-ui";
-import React from "react";
+import type { RunnerWidgetComponent } from "../../types";
 
-interface WidgetProps {
-  field: Field;
-  value: any;
-  onChange: (value: any) => void;
-}
-
-const RateWidget: React.FC<WidgetProps> = ({ field, value, onChange }) => {
-  return <Rate value={value} onChange={onChange} disabled={field.disabled} />;
+const RateWidget: RunnerWidgetComponent = ({ field, value, onChange }) => {
+  return <Rate value={value as number} onChange={onChange} disabled={field.disabled} />;
 };
 
 export default RateWidget;

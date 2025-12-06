@@ -4,6 +4,7 @@
  * Consumers typically import from this barrel module to render form fields
  * using the {@link WidgetFactory} or individual widget components.
  */
+export * from "./types";
 export * from "./WidgetFactory";
 export * from "./widgets/advanced/DateWidget";
 export * from "./widgets/advanced/RateWidget";

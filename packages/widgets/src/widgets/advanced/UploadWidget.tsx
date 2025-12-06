@@ -1,15 +1,7 @@
-import type { Field } from "@origami/core";
 import { AvatarUpload, DocumentUpload, FileUpload } from "@origami/form-ui";
-import React from "react";
+import type { RunnerWidgetComponent } from "../../types";
 
-interface WidgetProps {
-  field: Field;
-  value: any;
-  onChange: (value: any) => void;
-  error?: string;
-}
-
-const UploadWidget: React.FC<WidgetProps> = ({ field, value, onChange, error }) => {
+const UploadWidget: RunnerWidgetComponent = ({ field, value, onChange }) => {
   const safeValue = value === undefined || value === null ? "" : value;
   const lowerId = field.id.toLowerCase();
 
@@ -17,8 +9,7 @@ const UploadWidget: React.FC<WidgetProps> = ({ field, value, onChange, error }) 
   if (lowerId.includes("avatar") || lowerId.includes("photo")) {
     return (
       <div>
-        <AvatarUpload value={safeValue} onChange={onChange} disabled={field.disabled} />
-        {error && <span className="text-xs text-red-500 mt-1">{error}</span>}
+        <AvatarUpload value={safeValue as string} onChange={onChange} disabled={field.disabled} />
       </div>
     );
   }
@@ -27,8 +18,7 @@ const UploadWidget: React.FC<WidgetProps> = ({ field, value, onChange, error }) 
   if (lowerId.includes("contract") || lowerId.includes("doc") || lowerId.includes("file")) {
     return (
       <div className="space-y-1">
-        <DocumentUpload value={safeValue} onChange={onChange} disabled={field.disabled} />
-        {error && <span className="text-xs text-red-500">{error}</span>}
+        <DocumentUpload value={safeValue as string} onChange={onChange} disabled={field.disabled} />
       </div>
     );
   }
@@ -37,13 +27,12 @@ const UploadWidget: React.FC<WidgetProps> = ({ field, value, onChange, error }) 
   return (
     <div className="space-y-2">
       <FileUpload
-        value={safeValue}
+        value={safeValue as string}
         onChange={onChange}
         accept={field.accept}
         disabled={field.disabled}
         maxSize={field.maxFileSize ? field.maxFileSize / 1024 : undefined}
       />
-      {error && <span className="text-xs text-red-500">{error}</span>}
     </div>
   );
 };
