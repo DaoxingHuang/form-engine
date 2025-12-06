@@ -1,0 +1,19 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "packages/core/src/index.ts",
+    "packages/editor/src/index.ts",
+    "packages/form-ui/src/index.ts",
+    "packages/widgets/src/index.ts",
+    "packages/utils/src/index.ts"
+  ],
+  "tsconfig": "./tsconfig.json",
+  "out": "docs",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "excludeExternals": false,
+  "includeVersion": true,
+  "plugin": [],
+  "readme": "none",
+  "categorizeByGroup": true
+}
