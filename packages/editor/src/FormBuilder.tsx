@@ -1,10 +1,10 @@
 import { generateSchema, parseSchemaToFields, useBuilderStore, validateFormStructure } from "@origami/core";
-import { FormRunner } from "@origami/form-runner";
 import { AlertCircle, ClipboardList, Code, FileJson, Import, Play, Save, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Canvas from "./components/Canvas";
 import PropertiesPanel from "./components/PropertiesPanel";
 import Sidebar from "./components/Sidebar";
+import { FormRunner } from "./FormRunner";
 
 interface FormBuilderProps {
   onPublish?: (schema: any) => void;
