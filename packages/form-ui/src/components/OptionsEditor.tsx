@@ -3,6 +3,12 @@ import React from "react";
 import { Button } from "./base";
 import { Input } from "./Input";
 
+/**
+ * Small helper component for editing label/value option pairs.
+ *
+ * Typically used in builders to configure the options of select, radio or
+ * checkbox fields. It allows adding, editing and removing options in-place.
+ */
 export const OptionsEditor = ({
   options,
   onChange

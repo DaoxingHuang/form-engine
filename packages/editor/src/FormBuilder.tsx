@@ -6,11 +6,34 @@ import PropertiesPanel from "./components/PropertiesPanel";
 import Sidebar from "./components/Sidebar";
 import { FormRunner } from "./FormRunner";
 
+/**
+ * Props for {@link FormBuilder} component.
+ *
+ * {@link FormBuilder} 组件的属性定义。
+ */
 interface FormBuilderProps {
+  /**
+   * Callback fired when user publishes the current form.
+   *
+   * 用户点击「发布」时触发，参数为根据当前字段生成的 JSON Schema。
+   */
   onPublish?: (schema: any) => void;
+
+  /**
+   * Optional initial schema to populate the builder.
+   *
+   * 用于预加载已有 Schema，方便在编辑模式下继续修改已有表单。
+   */
   initialSchema?: any;
 }
-
+/**
+ * Visual form builder React component.
+ *
+ * 可视化表单构建器组件：
+ * - 左侧为字段选择区，中间为画布预览，右侧为属性面板；
+ * - 支持从 JSON Schema 导入 / 导出；
+ * - 内置基础结构校验，在发布前给出友好的错误提示。
+ */
 const FormBuilder: React.FC<FormBuilderProps> = ({ onPublish, initialSchema }) => {
   const { fields, setFields, setSelectedFieldId } = useBuilderStore();
   const [showJson, setShowJson] = useState(false);

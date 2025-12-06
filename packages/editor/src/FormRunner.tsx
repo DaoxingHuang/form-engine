@@ -3,13 +3,49 @@ import { WidgetFactory } from "@origami/widgets";
 import { AlertCircle, Eye, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
+/**
+ * Props for {@link FormRunner} component.
+ *
+ * {@link FormRunner} 组件的属性定义。
+ */
 interface FormRunnerProps {
+  /**
+   * Field definitions (usually generated from JSON Schema).
+   *
+   * 字段定义数组，通常由 Schema 解析而来，用于驱动表单渲染。
+   */
   fields: Field[];
+
+  /**
+   * Optional initial form values.
+   *
+   * 可选的初始表单数据，用于回填或编辑已有提交。
+   */
   initialValues?: Record<string, any>;
+
+  /**
+   * Callback fired when validation passes and user confirms submit.
+   *
+   * 当校验通过且用户确认提交时触发，参数为完整表单数据。
+   */
   onSubmit?: (data: any) => void;
+
+  /**
+   * Optional extra className applied to the root container.
+   *
+   * 根容器的额外样式类名，便于在宿主应用中自定义布局。
+   */
   className?: string;
 }
 
+/**
+ * Runtime form renderer React component.
+ *
+ * 表单运行器组件：
+ * - 根据字段定义自动渲染输入控件；
+ * - 通过 `useRunnerStore` 管理状态和校验；
+ * - 内置数据预览弹窗，支持 JSON / 可视化两种视图。
+ */
 export const FormRunner: React.FC<FormRunnerProps> = ({ fields, initialValues, onSubmit, className }) => {
   const { formData, errors, setFormData, updateField, validate } = useRunnerStore();
   const [showPreview, setShowPreview] = useState(false);

@@ -8,7 +8,8 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "eslint . --ext .ts,.tsx",
-    "clean": "rm -rf node_modules **/*/node_modules"
+    "clean": "rm -rf node_modules **/*/node_modules",
+    "docs": "typedoc"
   },
   "keywords": [
     "form-builder",
@@ -53,6 +54,7 @@
     "rollup-plugin-dts": "^6.2.3",
     "rollup-plugin-terser": "^7.0.2",
     "typescript": "^5.9.3",
+    "typedoc": "^0.27.0",
     "vitest": "^0.32.4",
     "zustand": "^4.5.0"
   },
