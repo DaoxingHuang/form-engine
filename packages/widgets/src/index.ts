@@ -1,3 +1,10 @@
+/**
+ * Public exports for the default widget set used by the Origami form engine.
+ *
+ * Consumers typically import from this barrel module to render form fields
+ * using the {@link WidgetFactory} or individual widget components.
+ */
+export * from "./types";
 export * from "./WidgetFactory";
 export * from "./widgets/advanced/DateWidget";
 export * from "./widgets/advanced/RateWidget";

@@ -2,6 +2,9 @@ import { FileCheck } from "lucide-react";
 import React, { useRef } from "react";
 import { cn } from "./base";
 
+/**
+ * Props for the {@link DocumentUpload} component.
+ */
 export interface DocumentUploadProps {
   value?: string;
   onChange?: (value: string) => void;
@@ -10,6 +13,13 @@ export interface DocumentUploadProps {
   label?: string;
 }
 
+/**
+ * Compact upload control specialized for single document selection.
+ *
+ * It displays a label, a short helper text and a primary button that opens the
+ * native file picker. When a file is selected, the component reports the
+ * chosen file name via `onChange`.
+ */
 export const DocumentUpload: React.FC<DocumentUploadProps> = ({
   value,
   onChange,

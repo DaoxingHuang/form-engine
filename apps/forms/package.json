@@ -8,12 +8,12 @@
     "test": "vitest --config vitest.simple.config.ts"
   },
   "dependencies": {
+    "@origami/editor": "workspace:*",
+    "@origami/widgets": "workspace:*",
     "@tweenjs/tween.js": "^18.6.4",
+    "lucide-react": "^0.556.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@origami/form-builder": "workspace:*",
-    "@origami/widgets": "workspace:*",
-    "@origami/form-runner": "workspace:*",
     "tailwindcss": "^3.4.18",
     "three": "^0.158.0",
     "zustand": "^4.0.0"

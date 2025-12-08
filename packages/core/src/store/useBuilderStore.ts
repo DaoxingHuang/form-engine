@@ -1,6 +1,11 @@
 import { create } from "zustand";
-import { Field } from "../types";
+import type { Field } from "../types";
 
+/**
+ * Builder store state shape.
+ *
+ * 表单构建器状态结构，包含字段列表、选中状态以及增删改字段的操作。
+ */
 interface BuilderState {
   fields: Field[];
   selectedFieldId: string | null;
@@ -16,6 +21,17 @@ interface BuilderState {
   removeSubField: (parentId: string, subId: string) => void;
 }
 
+/**
+ * Global state store for the form builder.
+ *
+ * 表单编辑器的全局 Zustand store：
+ * - 负责管理字段列表及其子字段；
+ * - 跟踪当前选中的字段和正在编辑的子字段；
+ * - 提供一组 immutable 风格的更新函数，方便在 UI 中直接调用。
+ *
+ * @remarks
+ * 此 store 在整个应用中是单例的，通常通过 `useBuilderStore()` 在 React 组件中直接访问。
+ */
 export const useBuilderStore = create<BuilderState>((set) => ({
   fields: [],
   selectedFieldId: null,
@@ -28,7 +44,7 @@ export const useBuilderStore = create<BuilderState>((set) => ({
   updateField: (id, updates) =>
     set((state) => ({
       fields: state.fields.map((f) => (f.id === id ? { ...f, ...updates } : f)),
-      selectedFieldId: updates.id && state.selectedFieldId === id ? updates.id : state.selectedFieldId
+      selectedFieldId: updates.id !== undefined && state.selectedFieldId === id ? updates.id : state.selectedFieldId
     })),
   removeField: (id) =>
     set((state) => ({
@@ -51,7 +67,8 @@ export const useBuilderStore = create<BuilderState>((set) => ({
         }
         return f;
       }),
-      editingSubFieldId: updates.id && state.editingSubFieldId === subId ? updates.id : state.editingSubFieldId
+      editingSubFieldId:
+        updates.id !== undefined && state.editingSubFieldId === subId ? updates.id : state.editingSubFieldId
     })),
   removeSubField: (parentId, subId) =>
     set((state) => ({

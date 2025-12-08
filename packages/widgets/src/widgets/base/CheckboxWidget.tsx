@@ -1,14 +1,7 @@
-import { Field } from "@origami/core";
 import { Checkbox } from "@origami/form-ui";
-import React from "react";
+import type { RunnerWidgetComponent } from "../../types";
 
-interface WidgetProps {
-  field: Field;
-  value: any;
-  onChange: (value: any) => void;
-}
-
-const CheckboxWidget: React.FC<WidgetProps> = ({ field, value, onChange }) => {
+const CheckboxWidget: RunnerWidgetComponent = ({ field, value, onChange }) => {
   const currentVals = Array.isArray(value) ? value : [];
 
   const toggleCheck = (optVal: string) => {

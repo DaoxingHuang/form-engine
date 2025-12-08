@@ -1,8 +1,9 @@
 {
-  "extends": "@origami/ts-config/react.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src"
+    "composite": false,
+    "rootDir": "../.."
   },
   "include": ["src"]
 }

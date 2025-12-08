@@ -4,7 +4,8 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
     "../../packages/default-widgets/src/**/*.{js,ts,jsx,tsx}",
-    "../../packages/form-ui/src/**/*.{js,ts,jsx,tsx}"
+    "../../packages/form-ui/src/**/*.{js,ts,jsx,tsx}",
+    "../../packages/editor/src/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
     extend: {}

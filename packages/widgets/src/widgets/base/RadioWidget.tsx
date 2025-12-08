@@ -1,14 +1,7 @@
-import { Field } from "@origami/core";
 import { Radio } from "@origami/form-ui";
-import React from "react";
+import type { RunnerWidgetComponent } from "../../types";
 
-interface WidgetProps {
-  field: Field;
-  value: any;
-  onChange: (value: any) => void;
-}
-
-export const RadioWidget: React.FC<WidgetProps> = ({ field, value, onChange }) => {
+export const RadioWidget: RunnerWidgetComponent = ({ field, value, onChange }) => {
   return (
     <div className="flex flex-wrap gap-4 pt-1">
       {field.options &&
